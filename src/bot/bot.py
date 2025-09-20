@@ -5,7 +5,7 @@ import os
 import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# from api.Journal_API import API
+from api.Journal_API import API
 from api.API_test import User
 
 CONFIG_PATH = "src/bot/config.json"
@@ -14,20 +14,35 @@ with open(CONFIG_PATH) as file:
     TOKEN = json.loads(file.read())["BOT_TOKEN"]
 
 users_states = {}
-
+user_auths = {}
 
 
 
 Bot = telebot.TeleBot(TOKEN)
+
+def check_auth(func):
+    def wrapper(message):
+        user_dict = user_auths.get(message.from_user.id)
+        user_states = users_states.get(message.from_user.id)
+
+        if user_dict == None and user_states == None:
+            markup = telebot.types.InlineKeyboardMarkup()
+            auth_button = telebot.types.InlineKeyboardButton("Авторизоваться", callback_data="auth")
+
+            markup.add(auth_button)
+            Bot.send_message(message.chat.id, "Авторизируйтесь!", reply_markup=markup)
+            return
+        return func(message)
+    return wrapper
+
 
 @Bot.message_handler(commands=['start'])
 def start(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1)
     check_today_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на сегодня")
     check_tomorrow_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на завтра")
-    auth_button = telebot.types.KeyboardButton("Авторизоваться")
 
-    keyboard.add(check_today_schedule_button, check_tomorrow_schedule_button, auth_button)
+    keyboard.add(check_today_schedule_button, check_tomorrow_schedule_button)
     Bot.send_message(message.chat.id, "Это Айте топ бот, тут можно смотреть расписание", reply_markup=keyboard)
 
 def send_schedule(message, iso_date):
@@ -61,18 +76,39 @@ def auth_username(message):
     username = message.text
     users_states.pop(message.from_user.id, None)
     users_states[message.from_user.id] = "Auth_on_password"
-    Bot.reply_to(message, "Пароль:")
-    print(username)
+    Bot.send_message(message.chat.id, "Пароль:")
+    user_auths[message.from_user.id] = {"username": username, "password": None}
 
 @Bot.message_handler(func=lambda message: users_states.get(message.from_user.id) == "Auth_on_password")
 def auth_password(message):
     password = message.text
     users_states.pop(message.from_user.id, None)
-    print(password)
+    user_auths[message.from_user.id]["password"] = password
+    print(user_auths)
+    Bot.send_message(message.chat.id, "Вхожу...")
+    user_auths[message.from_user.id]["User_obj"] = API(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
 
+    if user_auths[message.from_user.id]["User_obj"].succesful_auth == False:
+        Bot.send_message(message.chat.id, "Неправильные данные")
+        user_auths.pop(message.from_user.id)
+    else:
+        Bot.send_message(message.chat.id, "Успешный вход!")
+
+
+
+@Bot.callback_query_handler(func= lambda call: call.data == "auth" )
+def user_auth(call):
+    user_dict = user_auths.get(call.message.from_user.id)
+
+    if user_dict != None:
+        Bot.send_message(call.message.chat.id, "Ты уже авторизован!")
+    users_states[call.from_user.id] = "Auth_on_username"
+    Bot.send_message(call.message.chat.id, "Логин:")
+    
 
 
 @Bot.message_handler(func=lambda message: True)
+@check_auth
 def handle_message(message):
 
     if message.text == 'Посмотреть раписание на сегодня':
@@ -82,18 +118,5 @@ def handle_message(message):
     elif message.text == "Посмотреть раписание на завтра":
         iso_date = (datetime.datetime.today() + datetime.timedelta(days=1)).isoformat()[:10]
         send_schedule(message, iso_date)
-    elif message.text == "Авторизоваться":
-        users_states[message.from_user.id] = "Auth_on_username"
-        Bot.reply_to(message, "Логин:")
-        # @Bot.message_handler(func=lambda message: True)
-        # def get_login(message1):
-        #     username = message1.text
-        #     Bot.reply_to(message, "Пароль:")
-        #     @Bot.message_handler(func=lambda message: True)
-        #     def get_pass(message2):
-        #         password = message2.text
-        #         print(username, password)
-        #         Bot.send_message(message.chat.id, "Вхожу")
-
 
 Bot.infinity_polling()

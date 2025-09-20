@@ -9,8 +9,12 @@ API_HOST = "msapi.top-academy.ru"
 CONFIG_FILE = "src/api/creds.json"
 
 class API:
-    def __init__(self, USER: str, PASS: str):
+
+    def get_creds_from_config(self):
         ### Проверка на наличие JWT токена в конфиг файле
+
+        creds = {}
+
         with open(CONFIG_FILE, "r") as file:
             json_config = json.loads(file.read())
 
@@ -19,6 +23,28 @@ class API:
         else:
             JWT_TOKEN = None
 
+        creds["username"] = json_config["username"]
+        creds["password"] = json_config["password"]
+
+        headers_start = {
+        "Host": API_HOST,
+        "Referer": "https://journal.top-academy.ru/"
+        }
+    
+        if JWT_TOKEN == None:
+            JWT_TOKEN = self.get_JWT_token(self.USER, self.PASS, headers_start)
+            json_config["JWT_token"] = JWT_TOKEN
+            with open(CONFIG_FILE, "w") as file:
+                json_to_write = json.dumps()
+                file.write(json_to_write)
+    
+        creds["JWT_TOKEN"] = JWT_TOKEN
+        return creds
+            
+
+
+    def __init__(self, USER: str, PASS: str):
+        self.succesful_auth = False
         self.USER = USER
         self.PASS = PASS
 
@@ -28,15 +54,15 @@ class API:
         }
     
         self.headers_with_JWT = headers_start
-        
-        if JWT_TOKEN == None:
-            JWT_TOKEN = self.get_JWT_token(self.USER, self.PASS, headers_start)
-            json_config["JWT_token"] = JWT_TOKEN
-            with open(CONFIG_FILE, "w") as file:
-                json_to_write = json.dumps()
-                file.write(json_to_write)
+        # user_creds = self.get_creds_from_config()
+
+        JWT_TOKEN = self.get_JWT_token(self.USER, self.PASS, headers_start)
+
+        if JWT_TOKEN == False:
+            return
 
         self.headers_with_JWT["Authorization"] = "Bearer " + JWT_TOKEN
+        self.succesful_auth = True
 
     def get_JWT_token(self, username: str, password: str, headers_start: dict) -> str:
         url = "https://" + API_HOST + "/api/v2/auth/login"
@@ -59,6 +85,8 @@ class API:
             return json_responce_obj["access_token"]
         except Exception as e:
             print(e)
+            if str(e) == "Invalid creds":
+                return False
             exit()
 
 

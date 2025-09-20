@@ -1,3 +1,4 @@
 *.pyc
 creds.json
+config.json
 TODO
