@@ -48,13 +48,13 @@ def check_auth(func):
     return wrapper
 
 ### Отправка расписания по дате в формате ISO
-def send_schedule(message, iso_date):
+def send_schedule(call, iso_date):
 
-    today_schedule = user_auths[message.from_user.id]["User_obj"].get_schedule_by_date(iso_date)
+    today_schedule = user_auths[call.from_user.id]["User_obj"].get_schedule_by_date(iso_date)
     if today_schedule == False:
-        Bot.send_message(message.chat.id, "В этот день пар нет", parse_mode="MarkdownV2")
+        Bot.send_message(call.message.chat.id, f"{iso_date}: пар нет")
         return
-    msg_to_send = ''
+    msg_to_send = f'Расписание на <b>{iso_date}</b>:\n\n'
 
     for lesson_json in today_schedule:
         lesson_number = lesson_json["lesson"]
@@ -65,13 +65,13 @@ def send_schedule(message, iso_date):
         where = lesson_json["room_name"]
 
         msg_to_send += f"""\
-Пара №{lesson_number} \\({subject}\\):
-    \\- Время: *{start_time} \\- {end_time}*
-    \\- Ведет: *{teacher}*
-    \\- Кабинет: *{where}*
+Пара №{lesson_number} ({subject}):
+    - Время: <b>{start_time} - {end_time}</b>
+    - Ведет: <b>{teacher}</b>
+    - Кабинет: <b>{where}</b>
             
 """
-    Bot.send_message(message.chat.id, msg_to_send, parse_mode="MarkdownV2")
+    Bot.send_message(call.message.chat.id, msg_to_send, parse_mode="HTML")
 
 
 def get_user_status(telegram_id):
@@ -93,7 +93,7 @@ def get_user_status(telegram_id):
 @Bot.message_handler(commands=['start'])
 def start(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-    check_today_schedule_button = telebot.types.KeyboardButton("📅 Посмотреть раписание на сегодня")
+    check_today_schedule_button = telebot.types.KeyboardButton("📅 Посмотреть раписание")
     show_user_profile_button = telebot.types.KeyboardButton("🕵🏿‍♂️ Профиль")
     # check_tomorrow_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на завтра")
 
@@ -139,32 +139,57 @@ def user_auth(call):
     
 ### Конец авторизации
 
+### Выход из аккаунта
 @Bot.callback_query_handler(func= lambda call: call.data == "logout" )
-def user_auth(call):
+@check_auth
+def logout(call):
     db_obj.delete_user_by_telegram_id(call.from_user.id)
     if user_auths.get(call.message.from_user.id) != None:
         user_auths.pop(call.message.from_user.id)
     Bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта ✅")
 
+### Список расписаний
+@Bot.message_handler(func=lambda message: message.text == "📅 Посмотреть раписание")
+@check_auth
+def check_schedule(message):
+
+    keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
+
+    today_date = datetime.datetime.today()
+
+    for i in range(-1, 6):
+        date_iso = (today_date + datetime.timedelta(days=i)).isoformat()[:10]
+        date_iso_button_text = date_iso
+        if i == -1:
+            date_iso_button_text = "Вчера"
+        elif i == 0:
+            date_iso_button_text = "Сегодня"
+        elif i == 1:
+            date_iso_button_text = "Завтра"
+        schedule_button = telebot.types.InlineKeyboardButton(date_iso_button_text, callback_data=f"{date_iso}_day_schedule")
+        keyboard.add(schedule_button)
+
+    Bot.send_message(message.chat.id, "Выберите дату:", reply_markup=keyboard)
+
+### Отправить рассписание
+@Bot.callback_query_handler(func= lambda call: "_schedule" in call.data )
+@check_auth
+def user_auth(call):
+    if "_day_schedule" in call.data:
+        send_schedule(call, call.data[:10])
+
 @Bot.message_handler(func=lambda message: True)
 @check_auth
 def handle_message(message):
 
-    if message.text == "📅 Посмотреть раписание на сегодня":
-        iso_date = datetime.datetime.today().isoformat()[:10]
-        send_schedule(message, iso_date)
-
-    elif message.text == "Посмотреть раписание на завтра":
-        iso_date = (datetime.datetime.today() + datetime.timedelta(days=1)).isoformat()[:10]
-        send_schedule(message, iso_date)
-
-    elif message.text == "🕵🏿‍♂️ Профиль":
+    if message.text == "🕵🏿‍♂️ Профиль":
         profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
         logout_button = telebot.types.InlineKeyboardButton("Выйти из аккаунта ❌", callback_data="logout")
 
         profile_keyboard.add(logout_button)
 
         Bot.send_message(message.chat.id, "Твой профиль: бла бла бла скибиди жирни", reply_markup=profile_keyboard)
+
 
 if __name__ == "__main__":
     Bot.infinity_polling()
