@@ -11,7 +11,6 @@ CREDS_FILE = "src/api/creds.json"
 
 class API:
     def __init__(self, USER: str, PASS: str, JWT_token = False):
-        print("Создан API")
         self.succesful_auth = False
         self.USER = USER
         self.PASS = PASS
@@ -35,7 +34,6 @@ class API:
         self.succesful_auth = True
 
     def get_JWT_token(self, username: str, password: str, headers_start: dict) -> str:
-        print("отправляю JWT")
         url = "https://" + API_HOST + "/api/v2/auth/login"
         json_data = {
             "application_key":"6a56a5df2667e65aab73ce76d1dd737f7d1faef9c52e8b8c55ac75f565d8e8a6",
@@ -87,7 +85,6 @@ class API:
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue
-        print(self.JWT_TOKEN)
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
             return False

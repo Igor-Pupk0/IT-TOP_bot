@@ -45,6 +45,12 @@ class Creds_db:
         self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT username, password, JWT_token FROM Users WHERE telegram_id = ?", (telegram_id,))
         user_data = self.cursor.fetchone()
-        print(user_data)
         self.connection.close()
         return user_data
+    
+    def delete_user_by_telegram_id(self, telegram_id: int):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("DELETE FROM Users WHERE telegram_id = ?", (telegram_id,))
+        self.connection.commit()
+        self.connection.close()

@@ -7,9 +7,10 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.Journal_API import API
 from db.Journal_database import Creds_db
+from user_states import User
 
 
-CONFIG_PATH = "src/bot/config.json"
+CONFIG_PATH = "files/config.json"
 users_states = {} # Состояния пользователей
 user_auths = {} # Авторизированные пользователи
 
@@ -26,24 +27,23 @@ db_obj = Creds_db()
 ### Проверка авторизации
 def check_auth(func):
     def wrapper(message):
-        user_data = db_obj.get_all_by_telegram_id(message.from_user.id)
-        user_states = users_states.get(message.from_user.id)
+        user_data: set = db_obj.get_all_by_telegram_id(message.from_user.id)
+        user_states: User = users_states.get(message.from_user.id)
 
         if user_auths.get(message.from_user.id) == None and user_data != None:
             user_auths[message.from_user.id] = {"username": user_data[0], "password": user_data[1], "User_obj": None}
             user_auths[message.from_user.id]["User_obj"] = API(user_data[0], user_data[1], user_data[2])
-        elif user_data[2] == 'None' or user_data[2] == None:
-            print(12312)
-            db_obj.update_user_JWT_token(user_data[0], user_auths[message.from_user.id]["User_obj"].JWT_TOKEN)
 
-
-        if user_data == None and user_states == None:
+        if user_data == None and user_states.auth_status == "No_auth":
             markup = telebot.types.InlineKeyboardMarkup()
             auth_button = telebot.types.InlineKeyboardButton("Авторизоваться", callback_data="auth")
 
             markup.add(auth_button)
             Bot.send_message(message.chat.id, "Авторизируйтесь!", reply_markup=markup)
             return
+        if user_data[2] == 'None':
+            db_obj.update_user_JWT_token(user_data[0], user_auths[message.from_user.id]["User_obj"].JWT_TOKEN)
+
         return func(message)
     return wrapper
 
@@ -74,6 +74,17 @@ def send_schedule(message, iso_date):
     Bot.send_message(message.chat.id, msg_to_send, parse_mode="MarkdownV2")
 
 
+def get_user_status(telegram_id):
+    user_states = users_states.get(telegram_id)
+
+    if user_states != None:
+        return user_states
+    else:
+        user_states = User()
+        users_states[telegram_id] = user_states
+        return user_states
+    
+
 #####################################################################
 #   ДАЛЕЕ ИДУТ ПЕРЕХВАТЧИКИ КОМАНД, СООБЩЕНИЙ И ВЫЗОВОВ (callbacks) #
 #####################################################################
@@ -81,27 +92,28 @@ def send_schedule(message, iso_date):
 
 @Bot.message_handler(commands=['start'])
 def start(message):
-    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1)
-    check_today_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на сегодня")
-    check_tomorrow_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на завтра")
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
+    check_today_schedule_button = telebot.types.KeyboardButton("📅 Посмотреть раписание на сегодня")
+    show_user_profile_button = telebot.types.KeyboardButton("🕵🏿‍♂️ Профиль")
+    # check_tomorrow_schedule_button = telebot.types.KeyboardButton("Посмотреть раписание на завтра")
 
-    keyboard.add(check_today_schedule_button, check_tomorrow_schedule_button)
+    keyboard.add(check_today_schedule_button, show_user_profile_button)
     Bot.send_message(message.chat.id, "Это Айте топ бот, тут можно смотреть расписание", reply_markup=keyboard)
 
-
-@Bot.message_handler(func=lambda message: users_states.get(message.from_user.id) == "Auth_on_username")
+### Авторизация
+@Bot.message_handler(func=lambda message: get_user_status(message.from_user.id).auth_status == "Auth_on_username")
 def auth_username(message):
     username = message.text
-    users_states.pop(message.from_user.id, None)
-    users_states[message.from_user.id] = "Auth_on_password"
+    users_states[message.from_user.id].auth_status = "No_auth"
+    users_states[message.from_user.id].auth_status = "Auth_on_password"
     Bot.send_message(message.chat.id, "Пароль:")
     user_auths[message.from_user.id] = {"username": username, "password": None}
 
 
-@Bot.message_handler(func=lambda message: users_states.get(message.from_user.id) == "Auth_on_password")
+@Bot.message_handler(func=lambda message: users_states.get(message.from_user.id).auth_status == "Auth_on_password")
 def auth_password(message):
     password = message.text
-    users_states.pop(message.from_user.id, None)
+    users_states[message.from_user.id].auth_status = "No_auth"
     user_auths[message.from_user.id]["password"] = password
     Bot.send_message(message.chat.id, "Вхожу...")
     user_auths[message.from_user.id]["User_obj"] = API(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
@@ -114,8 +126,6 @@ def auth_password(message):
         db_obj.insert_user_creds(message.from_user.id, user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
         db_obj.update_user_JWT_token(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["User_obj"].JWT_TOKEN)
 
-        
-
 ### Инициализация авторизации
 @Bot.callback_query_handler(func= lambda call: call.data == "auth" )
 def user_auth(call):
@@ -124,21 +134,37 @@ def user_auth(call):
     if user_data != None:
         Bot.send_message(call.message.chat.id, "Ты уже авторизован!")
         return
-    users_states[call.from_user.id] = "Auth_on_username"
+    get_user_status(call.from_user.id).auth_status = "Auth_on_username"
     Bot.send_message(call.message.chat.id, "Логин:")
     
+### Конец авторизации
+
+@Bot.callback_query_handler(func= lambda call: call.data == "logout" )
+def user_auth(call):
+    db_obj.delete_user_by_telegram_id(call.from_user.id)
+    if user_auths.get(call.message.from_user.id) != None:
+        user_auths.pop(call.message.from_user.id)
+    Bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта ✅")
 
 @Bot.message_handler(func=lambda message: True)
 @check_auth
 def handle_message(message):
 
-    if message.text == 'Посмотреть раписание на сегодня':
+    if message.text == "📅 Посмотреть раписание на сегодня":
         iso_date = datetime.datetime.today().isoformat()[:10]
         send_schedule(message, iso_date)
 
     elif message.text == "Посмотреть раписание на завтра":
         iso_date = (datetime.datetime.today() + datetime.timedelta(days=1)).isoformat()[:10]
         send_schedule(message, iso_date)
+
+    elif message.text == "🕵🏿‍♂️ Профиль":
+        profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
+        logout_button = telebot.types.InlineKeyboardButton("Выйти из аккаунта ❌", callback_data="logout")
+
+        profile_keyboard.add(logout_button)
+
+        Bot.send_message(message.chat.id, "Твой профиль: бла бла бла скибиди жирни", reply_markup=profile_keyboard)
 
 if __name__ == "__main__":
     Bot.infinity_polling()
