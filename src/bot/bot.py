@@ -189,14 +189,80 @@ def call_send_homework(call):
     return_keyboard.add(return_button)
 
     match call.data:
-        # case "0_homework_show":
+        case "0_homework_show":
         #     homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(0)
+            homework_message_to_send = "Так как создатель бота прилежный студент, у меня нет просроченного ДЗ и я не могу пропарсить json ответ, чтобы добавить его просмотр сюда"
 
-        # case "1_homework_show":
-        #     homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(1)
+        case "1_homework_show":
+            marked_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(1)
+            homework_message_to_send = f"Оценки за дз на <b>{today_date}:</b>\n\n"
 
-        # case "2_homework_show":
-        #     homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(2)
+            for hw in marked_homework:
+                start_date = hw["creation_time"]
+                done_date = hw["homework_stud"]["creation_time"]
+                lesson_name = hw["name_spec"]
+                theme = hw["theme"]
+                homework_file_path = hw["homework_stud"]["file_path"]
+                mark = hw["homework_stud"]["mark"]
+                comment = hw["homework_comment"]["text_comment"]
+
+                clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+                if homework_file_path == None:
+                    clickable_file = "<i>Отсутствует</i>"
+                else:
+                    clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+
+                if comment == None:
+                    comment = "Отсутствует"
+
+                homework_message_to_send += f"""\
+ДЗ по {lesson_name}:
+Тема: <i>{theme}</i>
+ - Когда задали: <b>{start_date}</b>
+ - Сдано: <b>{done_date}</b>
+ - Оценка: <b>{mark}</b>
+ - Файл с ДЗ: {clickable_file}
+ Комментарий по дз от препода: <i>{comment}</i>
+
+"""
+    
+
+        case "2_homework_show":
+            waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(2)
+            homework_message_to_send = f"ДЗ, ожидающие проверки на <b>{today_date}:</b>\n\n"
+
+            for hw in waited_homework:
+                start_date = hw["creation_time"]
+                end_date = hw["completion_time"]
+                done_date = hw["homework_stud"]["creation_time"]
+
+                lesson_name = hw["name_spec"]
+                theme = hw["theme"]
+                homework_file_path = hw["file_path"]
+                comment = hw["comment"]
+                clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+
+                if homework_file_path == None:
+                    clickable_file = "<i>Отсутствует</i>"
+                else:
+                    clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+
+                if comment == None:
+                    comment = "Отсутствует"
+
+                homework_message_to_send += f"""\
+ДЗ по {lesson_name}:
+Тема: <i>{theme}</i>
+ - Когда задали: <b>{start_date}</b>
+ - Сдано: <b>{done_date}</b>
+ - Крайний день: <b>{end_date}</b>
+ - Файл с ДЗ: {clickable_file}
+ Комментарий: <i>{comment}</i>
+ 
+ """
+
+
+
 
         case "3_homework_show":
             actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(3)
@@ -223,7 +289,7 @@ def call_send_homework(call):
 
 """
             
-    Bot.send_message(call.message.chat.id, homework_message_to_send, parse_mode="HTML", reply_markup=return_keyboard)
+    Bot.send_message(call.message.chat.id, homework_message_to_send, parse_mode="HTML", reply_markup=return_keyboard, disable_web_page_preview=True)
 
 
 
