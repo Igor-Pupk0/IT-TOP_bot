@@ -1,5 +1,6 @@
 ###
 ### MAIN FILE FOR INTERACTING WITH JOURNAL API
+### Тут находиться класс для взаимодействия с API
 ###
 
 from db.Journal_database import Creds_db
@@ -7,7 +8,6 @@ import requests
 import json
 
 API_HOST = "msapi.top-academy.ru"
-CREDS_FILE = "src/api/creds.json"
 
 class API:
     def __init__(self, USER: str, PASS: str, JWT_token = False):
@@ -68,7 +68,7 @@ class API:
 
 
     def get_schedule_by_date(self, iso_date: str) -> dict:
-        url = "https://" + API_HOST + "/api/v2/schedule/operations/get-by-date?date_filter=" + iso_date
+        url = f"https://{API_HOST}/api/v2/schedule/operations/get-by-date?date_filter={iso_date}"
         
         for _ in range(1, 4):
             try:
@@ -82,6 +82,35 @@ class API:
             
             except Exception as e:
                 print("Error in 'get_schedule_by_date' func:", e)
+                if str(e) == "Unauthorized":
+                    self.update_JWT_headers()
+                    continue
+        json_responce_obj = json.loads(response.text)
+        if json_responce_obj == None or json_responce_obj == []:
+            return False
+        
+        return json_responce_obj
+    
+    # Получение ДЗ по типу:
+    #  - 0 - ? (возможно просроченное)
+    #  - 1 - Сданное и оцененное ДЗ
+    #  - 2 - Сданное ДЗ, ожидающее проверки
+    #  - 3 - Актуальное
+    def get_homework_by_status(self, homework_status: int) -> dict:
+        url = f"https://{API_HOST}/api/v2/homework/operations/list?page=1&status={homework_status}&type=0&group_id=84"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                if response.status_code != 200:
+                    if response.status_code == 401:
+                        raise Exception("Unauthorized")
+                    raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
+                break
+
+            except Exception as e:
+                print("Error in 'get_homework_by_status' func:", e)
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue

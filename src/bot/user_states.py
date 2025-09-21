@@ -9,6 +9,12 @@ class User:
         # 3) "Auth_on_password" - проходит авторизация, бот ждет пароль
         # 4) "Auth" - авторизован
         self.auth_status = "No_auth"
+
+        # main
+        # main/profile
+        # main/homeworks
+        # main/homeworks/some_hw
+        # main/schedule
         self.active_menu = "main"
 
     
