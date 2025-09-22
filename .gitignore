@@ -1,5 +1,4 @@
 *.pyc
-creds.json
 config.json
 TODO
 creds.db
