@@ -3,7 +3,7 @@
 ### Тут находиться класс для взаимодействия с API
 ###
 
-from db.Journal_database import Creds_db
+from src.db.Journal_database import Creds_db
 import requests
 import json
 
@@ -96,8 +96,8 @@ class API:
     #  - 1 - Сданное и оцененное ДЗ
     #  - 2 - Сданное ДЗ, ожидающее проверки
     #  - 3 - Актуальное
-    def get_homework_by_status(self, homework_status: int) -> dict:
-        url = f"https://{API_HOST}/api/v2/homework/operations/list?page=1&status={homework_status}&type=0&group_id=84"
+    def get_homework(self, homework_status: int, page: int) -> dict:
+        url = f"https://{API_HOST}/api/v2/homework/operations/list?page={page}&status={homework_status}&type=0&group_id=84"
         
         for _ in range(1, 4):
             try:
@@ -110,7 +110,7 @@ class API:
                 break
 
             except Exception as e:
-                print("Error in 'get_homework_by_status' func:", e)
+                print("Error in 'get_homework' func:", e)
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue

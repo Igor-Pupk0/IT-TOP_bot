@@ -1,13 +1,9 @@
 import telebot
 import datetime
-import sys
-import os
 import json
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from api.Journal_API import API
-from db.Journal_database import Creds_db
-from user_states import User
+from src.api.Journal_API import API
+from src.db.Journal_database import Creds_db
+from src.bot.user_states import User
 
 
 CONFIG_PATH = "files/config.json"
@@ -190,11 +186,12 @@ def call_send_homework(call):
 
     match call.data:
         case "0_homework_show":
-        #     homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(0)
-            homework_message_to_send = "Так как создатель бота прилежный студент, у меня нет просроченного ДЗ и я не могу пропарсить json ответ, чтобы добавить его просмотр сюда"
-
+        #   homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(0, 1)
+        #   homework_message_to_send = "Так как создатель бота прилежный студент, у меня нет просроченного ДЗ и я не могу пропарсить json ответ, чтобы добавить его просмотр сюда"
+            homework_message_to_send = "В разработке"
+            
         case "1_homework_show":
-            marked_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(1)
+            marked_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(1, 1)
             homework_message_to_send = f"Оценки за дз на <b>{today_date}:</b>\n\n"
 
             for hw in marked_homework:
@@ -228,7 +225,7 @@ def call_send_homework(call):
     
 
         case "2_homework_show":
-            waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(2)
+            waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(2, 1)
             homework_message_to_send = f"ДЗ, ожидающие проверки на <b>{today_date}:</b>\n\n"
 
             for hw in waited_homework:
@@ -265,7 +262,7 @@ def call_send_homework(call):
 
 
         case "3_homework_show":
-            actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(3)
+            actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework_by_status(3, 1)
             homework_message_to_send = f"Актуальное дз на <b>{today_date}:</b>\n\n"
 
             for hw in actual_homework:
