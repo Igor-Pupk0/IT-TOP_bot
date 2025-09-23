@@ -1,4 +1,4 @@
 if __name__ == "__main__":
     print("Starting bot...")
-    from src.bot.bot import Bot
-    Bot.infinity_polling()
+    from src.bot.main import bot
+    bot.infinity_polling()

@@ -1,0 +1,14 @@
+import telebot
+from ..core.authorization import check_auth
+
+def setup_profile_module(Bot):
+    @Bot.message_handler(func=lambda message: message.text == "🕵🏿‍♂️ Профиль")
+    @check_auth
+    def handle_message(message):
+        profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
+        logout_button = telebot.types.InlineKeyboardButton("Выйти из аккаунта ❌", callback_data="logout")
+        return_button =  return_button = telebot.types.InlineKeyboardButton("🔙 Назад", callback_data="return_main")
+
+        profile_keyboard.add(logout_button, return_button)
+
+        Bot.send_message(message.chat.id, "Твой профиль: бла бла бла скибиди жирни", reply_markup=profile_keyboard)
