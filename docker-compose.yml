@@ -1,0 +1,14 @@
+services:
+  bot:
+    build: .              # Собираем образ из Dockerfile в текущей папке
+    container_name: it-top_bot
+    image: it-top_bot:latest   # Имя образа
+    restart: on-failure
+    volumes:
+      - it-top_bot_files:/app/files   # монтируем папку для SQLite
+    environment:
+      - BOT_ENV=production
+    network_mode: "host"
+
+volumes:
+  it-top_bot_files:   # тут хранится твоя SQLite база

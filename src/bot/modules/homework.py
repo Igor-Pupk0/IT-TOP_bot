@@ -32,15 +32,21 @@ def setup_homework_module(Bot):
                     done_date = hw["homework_stud"]["creation_time"]
                     lesson_name = hw["name_spec"]
                     theme = hw["theme"]
+                    pinned_file_path = hw["file_path"]
                     homework_file_path = hw["homework_stud"]["file_path"]
                     mark = hw["homework_stud"]["mark"]
                     comment = hw["homework_comment"]["text_comment"]
 
-                    clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
-                    if homework_file_path == None:
-                        clickable_file = "<i>Отсутствует</i>"
+                    if pinned_file_path == None:
+                        clickable_pinned_file = "<i>Отсутствует</i>"
                     else:
-                        clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+                        clickable_pinned_file = f'<a href="{pinned_file_path}">ТЫК</a>'
+
+
+                    if homework_file_path == None:
+                        clickable_homework_file = "<i>Отсутствует</i>"
+                    else:
+                        clickable_homework_file = f'<a href="{homework_file_path}">ТЫК</a>'
 
                     if comment == None:
                         comment = "Отсутствует"
@@ -51,7 +57,8 @@ def setup_homework_module(Bot):
     - Когда задали: <b>{start_date}</b>
     - Сдано: <b>{done_date}</b>
     - Оценка: <b>{mark}</b>
-    - Файл с ДЗ: {clickable_file}
+    - ДЗ: {clickable_pinned_file}
+    - Выполненное ДЗ: {clickable_homework_file}
     Комментарий по дз от препода: <i>{comment}</i>
 
     """
@@ -68,14 +75,21 @@ def setup_homework_module(Bot):
 
                     lesson_name = hw["name_spec"]
                     theme = hw["theme"]
-                    homework_file_path = hw["file_path"]
+                    pinned_file_path = hw["file_path"]
+                    homework_file_path = hw["homework_stud"]["file_path"]
                     comment = hw["comment"]
-                    clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+                    clickable_pinned_file = f'<a href="{pinned_file_path}">ТЫК</a>'
+
+                    if pinned_file_path == None:
+                        clickable_pinned_file = "<i>Отсутствует</i>"
+                    else:
+                        clickable_pinned_file = f'<a href="{pinned_file_path}">ТЫК</a>'
 
                     if homework_file_path == None:
-                        clickable_file = "<i>Отсутствует</i>"
+                        clickable_homework_file = "<i>Отсутствует</i>"
                     else:
-                        clickable_file = f'<a href="{homework_file_path}">ТЫК</a>'
+                        clickable_homework_file = f'<a href="{homework_file_path}">ТЫК</a>'
+
 
                     if comment == None:
                         comment = "Отсутствует"
@@ -86,7 +100,8 @@ def setup_homework_module(Bot):
     - Когда задали: <b>{start_date}</b>
     - Сдано: <b>{done_date}</b>
     - Крайний день: <b>{end_date}</b>
-    - Файл с ДЗ: {clickable_file}
+    - ДЗ: {clickable_pinned_file}
+    - Выполненное ДЗ: 
     Комментарий: <i>{comment}</i>
     
     """
