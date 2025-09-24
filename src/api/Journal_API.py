@@ -143,4 +143,10 @@ class API:
         if json_responce_obj == None or json_responce_obj == []:
             return False
         
-        return json_responce_obj
+        homework_count_dict = {}
+
+        for i in json_responce_obj:
+            homework_count_dict[ f'type_{i["counter_type"]}' ] = i["counter"]
+
+        return homework_count_dict
+    

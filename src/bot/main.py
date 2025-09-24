@@ -6,6 +6,7 @@ from .modules.profile import setup_profile_module
 from .modules.schedule import setup_schedule_module
 from .modules.homework import setup_homework_module
 from .modules.start import setup_start_module
+from .modules.pages_callbacks import setup_pages_cb_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -15,6 +16,7 @@ setup_profile_module(bot)
 setup_homework_module(bot)
 setup_schedule_module(bot)
 setup_start_module(bot)
+setup_pages_cb_module(bot)
 
 if __name__ == "__main__":
     bot.infinity_polling()
