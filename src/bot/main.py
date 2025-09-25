@@ -1,6 +1,7 @@
 import telebot
 from src.bot.core.storage import TOKEN
 
+from .core.logs import logger
 from .modules.menu_returns import setup_returns_module
 from .modules.profile import setup_profile_module
 from .modules.schedule import setup_schedule_module
@@ -21,4 +22,5 @@ setup_start_module(bot)
 setup_pages_cb_module(bot)
 
 if __name__ == "__main__":
+    logger.info("Бот запущен")
     bot.infinity_polling()

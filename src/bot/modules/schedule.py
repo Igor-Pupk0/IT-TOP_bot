@@ -2,6 +2,7 @@ import telebot
 import datetime
 from src.bot.modules.authorization import check_auth
 from src.bot.core.storage import user_auths
+from ..core.logs import logger
 
 
 def setup_schedule_module(Bot: telebot.TeleBot):
@@ -35,6 +36,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
                 
     """
         Bot.send_message(call.message.chat.id, msg_to_send, parse_mode="HTML", reply_markup=return_keyboard)
+        logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) посмотрел расписание на {iso_date}")
 
 
 
@@ -49,7 +51,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
     @Bot.message_handler(func=lambda message: message.text == "📅 Посмотреть раписание")
     @check_auth
     def check_schedule(message):
-
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
 
         today_date = datetime.datetime.today()

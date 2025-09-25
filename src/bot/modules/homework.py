@@ -1,10 +1,11 @@
 import telebot
 import datetime
 
-from src.bot.core.storage import user_auths
-from src.bot.modules.authorization import check_auth
-from src.bot.core.pages import Pages, messages_pages
-from src.bot.core.keyboards import make_return_button, make_turn_pages_buttons
+from ..core.storage import user_auths
+from .authorization import check_auth
+from ..core.pages import Pages, messages_pages
+from ..core.keyboards import make_return_button, make_turn_pages_buttons
+from ..core.logs import logger
 
 def setup_homework_module(Bot):
 
@@ -12,6 +13,7 @@ def setup_homework_module(Bot):
     @Bot.callback_query_handler(func= lambda call: "_homework_show" in call.data )
     @check_auth
     def call_send_homework(call: telebot.types.CallbackQuery):
+        logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет посмотреть ДЗ под номером {call.data[0:1]}")
         today_date = datetime.datetime.today().isoformat()[:10]
         homework_message_to_send = ''
 
@@ -160,6 +162,7 @@ def setup_homework_module(Bot):
             disable_web_page_preview=True)
         
         messages_pages[sended_message.message_id] = pages_obj
+        logger.info(f"Пользователю ({call.from_user.username}:{call.from_user.id}) отправлено ДЗ под номером {call.data[0:1]}")
 
 
 
@@ -168,6 +171,7 @@ def setup_homework_module(Bot):
     @Bot.message_handler(func=lambda message: message.text == "📔 Посмотреть ДЗ")
     @check_auth
     def check_homeworks(message: telebot.types.Message):
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         homework_count = user_auths[message.from_user.id]["User_obj"].get_homework_count()
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)

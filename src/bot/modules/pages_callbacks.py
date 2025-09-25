@@ -11,7 +11,11 @@ def setup_pages_cb_module(bot: telebot.TeleBot):
             return
                 
         if call.data == "turn_right":
-            bot.edit_message_text(page_obj.turn_right_page(),
+            right_page = page_obj.turn_right_page()
+
+            if right_page == call.message.text:
+                return
+            bot.edit_message_text(right_page,
                                   call.message.chat.id,
                                   call.message.id,
                                   reply_markup=call.message.reply_markup,
@@ -19,7 +23,12 @@ def setup_pages_cb_module(bot: telebot.TeleBot):
                                   disable_web_page_preview=True)
             
         elif call.data == "turn_left":
-            bot.edit_message_text(page_obj.turn_left_page(), 
+            left_page = page_obj.turn_left_page()
+
+            if left_page == call.message.text:
+                return
+
+            bot.edit_message_text(left_page, 
                                   call.message.chat.id, 
                                   call.message.id, 
                                   reply_markup=call.message.reply_markup, 

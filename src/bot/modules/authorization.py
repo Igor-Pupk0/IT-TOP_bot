@@ -7,6 +7,7 @@ import telebot
 from src.api.Journal_API import API
 from ..core.storage import db_obj, user_auths
 from ..core.states import get_user_status
+from ..core.logs import logger
 
 def setup_auth_module(Bot: telebot.TeleBot):
     global bot
@@ -14,7 +15,8 @@ def setup_auth_module(Bot: telebot.TeleBot):
 
     ### Инициализация авторизации
     @bot.callback_query_handler(func= lambda call: call.data == "auth" )
-    def user_auth(call):
+    def user_auth(call: telebot.types.CallbackQuery):
+        logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) инициализировал процесс авторизации")
         user_data = db_obj.get_all_by_telegram_id(call.from_user.id)
 
         if user_data != None:
@@ -26,6 +28,7 @@ def setup_auth_module(Bot: telebot.TeleBot):
     ### Авторизация
     @bot.message_handler(func=lambda message: get_user_status(message.from_user.id).auth_status == "Auth_on_username")
     def auth_username(message):
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел логин")
         username = message.text
         user_states = get_user_status(message.from_user.id)
         user_states.auth_status = "No_auth"
@@ -35,6 +38,7 @@ def setup_auth_module(Bot: telebot.TeleBot):
 
     @bot.message_handler(func=lambda message: get_user_status(message.from_user.id).auth_status == "Auth_on_password")
     def auth_password(message):
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел пароль")
         password = message.text
         user_states = get_user_status(message.from_user.id)
         user_states.auth_status = "No_auth"
@@ -43,9 +47,11 @@ def setup_auth_module(Bot: telebot.TeleBot):
         user_auths[message.from_user.id]["User_obj"] = API(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
 
         if user_auths[message.from_user.id]["User_obj"].succesful_auth == False:
+            logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел неправильные данные для входа")
             bot.send_message(message.chat.id, "Неправильные данные")
             user_auths.pop(message.from_user.id)
         else:
+            logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) вошел в аккаунт")
             bot.send_message(message.chat.id, "Успешный вход!")
             db_obj.insert_user_creds(message.from_user.id, user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
             db_obj.update_user_JWT_token(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["User_obj"].JWT_TOKEN)
@@ -54,6 +60,7 @@ def setup_auth_module(Bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: call.data == "logout" )
     @check_auth
     def logout(call):
+        logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вышел из аккаунта")
         db_obj.delete_user_by_telegram_id(call.from_user.id)
         if user_auths.get(call.message.from_user.id) != None:
             user_auths.pop(call.message.from_user.id)
