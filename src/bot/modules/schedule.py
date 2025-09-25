@@ -1,6 +1,6 @@
 import telebot
 import datetime
-from src.bot.core.authorization import check_auth
+from src.bot.modules.authorization import check_auth
 from src.bot.core.storage import user_auths
 
 

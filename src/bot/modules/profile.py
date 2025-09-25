@@ -1,5 +1,5 @@
 import telebot
-from ..core.authorization import check_auth
+from .authorization import check_auth
 
 def setup_profile_module(Bot):
     @Bot.message_handler(func=lambda message: message.text == "🕵🏿‍♂️ Профиль")

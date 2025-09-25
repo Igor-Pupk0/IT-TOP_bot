@@ -2,7 +2,7 @@ import telebot
 import datetime
 
 from src.bot.core.storage import user_auths
-from src.bot.core.authorization import check_auth
+from src.bot.modules.authorization import check_auth
 from src.bot.core.pages import Pages, messages_pages
 from src.bot.core.keyboards import make_return_button, make_turn_pages_buttons
 

@@ -1,4 +1,4 @@
-from ..core.authorization import check_auth
+from .authorization import check_auth
 import telebot
 
 def setup_returns_module(bot):

@@ -7,10 +7,12 @@ from .modules.schedule import setup_schedule_module
 from .modules.homework import setup_homework_module
 from .modules.start import setup_start_module
 from .modules.pages_callbacks import setup_pages_cb_module
+from .modules.authorization import setup_auth_module
 
 
 bot = telebot.TeleBot(TOKEN)
 
+setup_auth_module(bot)
 setup_returns_module(bot)
 setup_profile_module(bot)
 setup_homework_module(bot)
