@@ -150,3 +150,10 @@ class API:
 
         return homework_count_dict
     
+    def check_server_work(self):
+        url = f"https://{API_HOST}/api/v2/count/homework?type=0"
+        response = requests.get(url, headers=self.headers_with_JWT)
+        if response.status_code >= 500:
+            return False
+        elif response.status_code == 200:
+            return True

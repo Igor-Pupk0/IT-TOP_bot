@@ -6,6 +6,7 @@ from .authorization import check_auth
 from ..core.pages import Pages, messages_pages
 from ..core.keyboards import make_return_button, make_turn_pages_buttons
 from ..core.logs import logger
+from .journal_500 import check_server_error
 
 def setup_homework_module(Bot):
 
@@ -170,6 +171,7 @@ def setup_homework_module(Bot):
     ### Список ДЗ
     @Bot.message_handler(func=lambda message: message.text == "📔 Посмотреть ДЗ")
     @check_auth
+    @check_server_error
     def check_homeworks(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         homework_count = user_auths[message.from_user.id]["User_obj"].get_homework_count()

@@ -3,6 +3,7 @@ import datetime
 from src.bot.modules.authorization import check_auth
 from src.bot.core.storage import user_auths
 from ..core.logs import logger
+from .journal_500 import check_server_error
 
 
 def setup_schedule_module(Bot: telebot.TeleBot):
@@ -43,6 +44,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
     ### Отправить расписание
     @Bot.callback_query_handler(func= lambda call: "_schedule" in call.data )
     @check_auth
+    @check_server_error
     def call_schedule(call):
         if "_day_schedule" in call.data:
             send_schedule(call, call.data[:10])
@@ -50,6 +52,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
     ### Список расписаний
     @Bot.message_handler(func=lambda message: message.text == "📅 Посмотреть раписание")
     @check_auth
+    @check_server_error
     def check_schedule(message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)

@@ -8,6 +8,7 @@ from src.api.Journal_API import API
 from ..core.storage import db_obj, user_auths
 from ..core.states import get_user_status
 from ..core.logs import logger
+from .journal_500 import check_server_error
 
 def setup_auth_module(Bot: telebot.TeleBot):
     global bot
@@ -45,7 +46,7 @@ def setup_auth_module(Bot: telebot.TeleBot):
         user_auths[message.from_user.id]["password"] = password
         bot.send_message(message.chat.id, "Вхожу...")
         user_auths[message.from_user.id]["User_obj"] = API(user_auths[message.from_user.id]["username"], user_auths[message.from_user.id]["password"])
-
+        
         if user_auths[message.from_user.id]["User_obj"].succesful_auth == False:
             logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел неправильные данные для входа")
             bot.send_message(message.chat.id, "Неправильные данные")
