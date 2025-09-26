@@ -1,6 +1,7 @@
 import telebot
 from ...api.Journal_API import API
 from ..core.storage import db_obj, user_auths
+from ..core.logs import logger
 
 def setup_error_module(Bot: telebot.TeleBot):
     global bot
@@ -14,11 +15,10 @@ def check_server_error(func):
         status = User.check_server_work()
 
         if status == False:
-            print(1)
             bot.send_message(message_or_call.chat.id, "❗️Основной функционал бота недоступен из-за проблем со стороны основного журнала, попробуйте позже")
+            logger.warning(f"Пользователь ({message_or_call.from_user.username}:{message_or_call.from_user.id}): Журнал не работает")
             return
         else:
-            print(2)
             return message_or_call
         
     return wrapper
