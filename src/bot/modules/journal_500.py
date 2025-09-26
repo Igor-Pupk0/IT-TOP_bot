@@ -9,7 +9,6 @@ def setup_error_module(Bot: telebot.TeleBot):
 
 def check_server_error(func):
     def wrapper(message_or_call):
-        print(123)
         User_dict: dict = user_auths.get(message_or_call.from_user.id)
         User: API = User_dict.get("User_obj")
         status = User.check_server_work()
@@ -19,6 +18,6 @@ def check_server_error(func):
             logger.warning(f"Пользователь ({message_or_call.from_user.username}:{message_or_call.from_user.id}): Журнал не работает")
             return
         else:
-            return message_or_call
+            return func(message_or_call)
         
     return wrapper
