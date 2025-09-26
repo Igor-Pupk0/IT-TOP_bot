@@ -14,7 +14,7 @@ def setup_start_module(bot: telebot.TeleBot):
             telebot.types.KeyboardButton("📔 Посмотреть ДЗ")
         )
         bot.send_message(message.chat.id, 
-            "Это Айте топ бот, тут можно смотреть расписание и не только. Бот еще в разработке. Половая связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>", 
+            f"Это Айте топ бот, тут можно смотреть расписание и не только. Бот еще в разработке. Половая связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>", 
             reply_markup=keyboard,
             parse_mode="HTML")
         
