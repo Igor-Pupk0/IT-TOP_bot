@@ -169,7 +169,7 @@ def setup_homework_module(Bot):
 
 
     ### Список ДЗ
-    @Bot.message_handler(func=lambda message: message.text == "📔 Посмотреть ДЗ")
+    @Bot.message_handler(func=lambda message: message.text == "📔 ДЗ")
     @check_auth
     @check_server_error
     def check_homeworks(message: telebot.types.Message):

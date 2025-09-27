@@ -13,10 +13,9 @@ from .modules.journal_500 import setup_error_module
 
 bot = telebot.TeleBot(TOKEN)
 
-
-start_function = setup_start_module(bot)
+setup_start_module(bot)
 setup_auth_module(bot)
-setup_returns_module(bot, start_function)
+setup_returns_module(bot)
 setup_profile_module(bot)
 setup_homework_module(bot)
 setup_schedule_module(bot)

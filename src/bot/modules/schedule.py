@@ -50,7 +50,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
             send_schedule(call, call.data[:10])
 
     ### Список расписаний
-    @Bot.message_handler(func=lambda message: message.text == "📅 Посмотреть раписание")
+    @Bot.message_handler(func=lambda message: message.text == "📅 Раписание")
     @check_auth
     @check_server_error
     def check_schedule(message):

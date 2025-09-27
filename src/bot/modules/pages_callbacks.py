@@ -13,7 +13,7 @@ def setup_pages_cb_module(bot: telebot.TeleBot):
         if call.data == "turn_right":
             right_page = page_obj.turn_right_page()
 
-            if right_page == call.message.text:
+            if right_page == call.message.text or right_page == False:
                 return
             bot.edit_message_text(right_page,
                                   call.message.chat.id,
@@ -25,7 +25,7 @@ def setup_pages_cb_module(bot: telebot.TeleBot):
         elif call.data == "turn_left":
             left_page = page_obj.turn_left_page()
 
-            if left_page == call.message.text:
+            if left_page == call.message.text or left_page == False:
                 return
 
             bot.edit_message_text(left_page, 

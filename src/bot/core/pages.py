@@ -19,16 +19,14 @@ class Pages():
     
     def turn_right_page(self):
         if self.now_page + 1 > self.page_count:
-            self.now_page = self.page_count + 1
-            return f"Страница: {self.now_page}\nА вы знали, что мопсам тоже трудно дышать? но изза них не устраивают протесты"
+            return False
         
         self.now_page += 1
         return self.get_page()
     
     def turn_left_page(self):
         if self.now_page - 1 <= 0:
-            self.now_page = 0
-            return f"Страница: {self.now_page}\nА вы знали, что мопсам тоже трудно дышать? но изза них не устраивают протесты"
+            return False
         
         self.now_page -= 1
         return self.get_page()

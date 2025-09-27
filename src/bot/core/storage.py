@@ -5,6 +5,7 @@ TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 ENV = os.getenv("BOT_ENV")
 WEBHOOK_ENDPOINT = os.getenv("WEBHOOK_ENDPOINT")
+SUPPORT_USERNAME = "igor_ppk_help_bot"
 
 db_obj = Creds_db()
 users_states = {} # Состояния пользователей
