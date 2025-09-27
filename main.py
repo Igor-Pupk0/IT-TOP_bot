@@ -1,11 +1,15 @@
 from src.bot.core.logs import logger
+from src.bot.core.storage import ENV
 
 if __name__ == "__main__":
     logger.info("Бот запущен")
     from src.bot.main import bot
-    from src.bot.modules.webhooks import setup_webhooks_module
     try:
-        setup_webhooks_module(bot)
+        if ENV == "prod":
+            from src.bot.webhooks import setup_webhooks_module
+            setup_webhooks_module(bot)
+        elif ENV == "dev":
+            bot.infinity_polling()
     except Exception as e:
-        logger.error(e)
+        logger.error(f"Ошибка на профиле {ENV}: ", e)
         

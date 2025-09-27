@@ -1,11 +1,10 @@
-import json
+import os
 from src.db.Journal_database import Creds_db
 
-CONFIG_PATH = "files/config.json"
-
-with open(CONFIG_PATH) as file:
-    TOKEN = json.loads(file.read())["BOT_TOKEN"]
-    WEBHOOK_URL = json.loads(file.read())["WEBHOOK_URL"]
+TOKEN = os.getenv("BOT_TOKEN")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+ENV = os.getenv("BOT_ENV")
+WEBHOOK_ENDPOINT = os.getenv("WEBHOOK_ENDPOINT")
 
 db_obj = Creds_db()
 users_states = {} # Состояния пользователей

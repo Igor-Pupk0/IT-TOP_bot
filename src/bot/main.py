@@ -1,7 +1,6 @@
 import telebot
 from src.bot.core.storage import TOKEN
 
-from .core.logs import logger
 from .modules.menu_returns import setup_returns_module
 from .modules.profile import setup_profile_module
 from .modules.schedule import setup_schedule_module
@@ -10,7 +9,6 @@ from .modules.start import setup_start_module
 from .modules.pages_callbacks import setup_pages_cb_module
 from .modules.authorization import setup_auth_module
 from .modules.journal_500 import setup_error_module
-from .modules.webhooks import setup_webhooks_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -23,8 +21,3 @@ setup_schedule_module(bot)
 setup_start_module(bot)
 setup_pages_cb_module(bot)
 setup_error_module(bot)
-
-
-if __name__ == "__main__":
-    logger.info("Бот запущен")
-    setup_webhooks_module(bot)
