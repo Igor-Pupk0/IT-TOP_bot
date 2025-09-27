@@ -80,11 +80,11 @@ def setup_homework_module(Bot):
     """)
 
             case "2_homework_show":
-                waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(2, 1)
                 homework_message_to_send = f"ДЗ, ожидающие проверки на <b>{today_date}:</b>\n\n"
                 pages_count = homework_count["type_2"] // 6 + 2
 
                 for page in range(1, pages_count):
+                    waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(2, page)
                     for hw in waited_homework:
                         start_date = hw["creation_time"]
                         end_date = hw["completion_time"]
@@ -127,11 +127,11 @@ def setup_homework_module(Bot):
 
 
             case "3_homework_show":
-                actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(3, 1)
                 homework_message_to_send = f"Актуальное дз на <b>{today_date}:</b>\n\n"
                 pages_count = homework_count["type_3"] // 6 + 2
 
                 for page in range(1, pages_count):
+                    actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(3, page)
                     for hw in actual_homework:
                         start_date = hw["creation_time"]
                         end_date = hw["completion_time"]

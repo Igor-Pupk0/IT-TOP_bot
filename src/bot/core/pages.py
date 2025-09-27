@@ -18,8 +18,8 @@ class Pages():
         return self.page_list[self.now_page - 1]
     
     def turn_right_page(self):
-        if self.page_count < self.now_page + 1:
-            self.now_page = self.page_count
+        if self.now_page + 1 > self.page_count:
+            self.now_page = self.page_count + 1
             return f"Страница: {self.now_page}\nА вы знали, что мопсам тоже трудно дышать? но изза них не устраивают протесты"
         
         self.now_page += 1
