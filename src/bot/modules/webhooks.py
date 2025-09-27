@@ -1,8 +1,7 @@
 import telebot
 from flask import Flask, request
+from ..core.storage import WEBHOOK_URL
 
-WEBHOOK_URL = "https://DOMAIN_URL_PLACEHOLDER/it-top_bot"   # URL бота
-CERT_PATH = "/etc/letsencrypt/live/DOMAIN_URL_PLACEHOLDER/"
 
 app = Flask(__name__)
 

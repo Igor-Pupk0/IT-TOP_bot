@@ -5,7 +5,7 @@ CONFIG_PATH = "files/config.json"
 
 with open(CONFIG_PATH) as file:
     TOKEN = json.loads(file.read())["BOT_TOKEN"]
-
+    WEBHOOK_URL = json.loads(file.read())["WEBHOOK_URL"]
 
 db_obj = Creds_db()
 users_states = {} # Состояния пользователей
