@@ -8,7 +8,39 @@ services:
       - it-top_bot_files:/app/files   # монтируем папку для SQLite
     environment:
       - BOT_ENV=production
-    network_mode: "host"
+    networks:
+      - botnet
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - certs:/etc/letsencrypt
+    depends_on:
+      - bot
+    networks:
+      - botnet
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_ssl
+    volumes:
+      - certs:/etc/letsencrypt
+      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
+    entrypoint: >
+      sh -c "while :; do sleep 6h & wait $$!; 
+              certbot renew --webroot -w /var/www/certbot; 
+              nginx -s reload; done"
 
 volumes:
+  certs:
   it-top_bot_files:   # тут хранится твоя SQLite база
+
+networks:
+  botnet:
+    driver: bridge
