@@ -8,7 +8,6 @@ from .modules.homework import setup_homework_module
 from .modules.start import setup_start_module
 from .modules.pages_callbacks import setup_pages_cb_module
 from .modules.authorization import setup_auth_module
-from .modules.journal_500 import setup_error_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -20,4 +19,3 @@ setup_profile_module(bot)
 setup_homework_module(bot)
 setup_schedule_module(bot)
 setup_pages_cb_module(bot)
-setup_error_module(bot)

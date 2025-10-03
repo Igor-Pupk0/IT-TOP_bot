@@ -8,7 +8,6 @@ from src.api.Journal_API import API
 from ..core.storage import db_obj, user_auths
 from ..core.states import get_user_status
 from ..core.logs import logger
-from .journal_500 import check_server_error
 
 def setup_auth_module(Bot: telebot.TeleBot):
     global bot

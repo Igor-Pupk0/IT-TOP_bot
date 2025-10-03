@@ -48,6 +48,9 @@ class API:
             if response.status_code != 200:
                 if response.status_code == 422:
                     raise Exception("Invalid creds")
+                elif response.status_code == 500:
+                    raise Exception("Server error")
+                
                 raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
             
             json_responce_obj = json.loads(response.text)
@@ -56,7 +59,8 @@ class API:
             print(e)
             if str(e) == "Invalid creds":
                 return False
-            exit()
+            elif str(e) == "Server error":
+                return response.status_code
 
 
     def update_JWT_headers(self):
@@ -77,6 +81,9 @@ class API:
                 if response.status_code != 200:
                     if response.status_code == 401:
                         raise Exception("Unauthorized")
+                    elif response.status_code == 500:
+                        raise Exception("Server error")
+                    
                     raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
                 break
             
@@ -85,6 +92,11 @@ class API:
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue
+
+                elif str(e) == "Server error":
+                    return response.status_code
+
+
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
             return False
@@ -106,7 +118,11 @@ class API:
                 if response.status_code != 200:
                     if response.status_code == 401:
                         raise Exception("Unauthorized")
+                    elif response.status_code == 500:
+                        raise Exception("Server error")
+
                     raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
+                
                 break
 
             except Exception as e:
@@ -114,6 +130,9 @@ class API:
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue
+                elif str(e) == "Server error":
+                    return response.status_code
+                
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
             return False
@@ -131,6 +150,9 @@ class API:
                 if response.status_code != 200:
                     if response.status_code == 401:
                         raise Exception("Unauthorized")
+                    elif response.status_code == 500:
+                        raise Exception("Server error")
+
                     raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
                 break
 
@@ -139,6 +161,8 @@ class API:
                 if str(e) == "Unauthorized":
                     self.update_JWT_headers()
                     continue
+                elif str(e) == "Server error":
+                    return response.status_code
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
             return False
@@ -150,10 +174,3 @@ class API:
 
         return homework_count_dict
     
-    def check_server_work(self):
-        url = f"https://{API_HOST}/api/v2/count/homework?type=0"
-        response = requests.get(url, headers=self.headers_with_JWT)
-        if response.status_code >= 500:
-            return False
-        elif response.status_code == 200:
-            return True

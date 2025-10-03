@@ -2,7 +2,7 @@ import telebot
 from .authorization import check_auth
 from ..core.logs import logger
 
-def setup_profile_module(Bot):
+def setup_profile_module(Bot: telebot.TeleBot):
     @Bot.message_handler(func=lambda message: message.text == "🕵🏿‍♂️ Профиль")
     @check_auth
     def handle_message(message):
@@ -13,4 +13,4 @@ def setup_profile_module(Bot):
 
         profile_keyboard.add(logout_button, return_button)
 
-        Bot.send_message(message.chat.id, "Твой профиль: бла бла бла скибиди жирни", reply_markup=profile_keyboard)
+        Bot.send_message(message.chat.id, "Твой профиль: а нету", reply_markup=profile_keyboard)

@@ -6,7 +6,7 @@ from .authorization import check_auth
 from ..core.pages import Pages, messages_pages
 from ..core.keyboards import make_return_button, make_turn_pages_buttons
 from ..core.logs import logger
-from .journal_500 import check_server_error
+from ..core.journal_500 import get_500_message
 
 def setup_homework_module(Bot):
 
@@ -19,6 +19,10 @@ def setup_homework_module(Bot):
         homework_message_to_send = ''
 
         homework_count = user_auths[call.from_user.id]["User_obj"].get_homework_count()
+
+        if homework_count == 500:
+            Bot.send_message(get_500_message(call.message))
+            return
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
         turn_left_button, turn_right_button = make_turn_pages_buttons()
@@ -120,7 +124,7 @@ def setup_homework_module(Bot):
     - Сдано: <b>{done_date}</b>
     - Крайний день: <b>{end_date}</b>
     - ДЗ: {clickable_pinned_file}
-    - Выполненное ДЗ: 
+    - Выполненное ДЗ: {clickable_homework_file}
     Комментарий: <i>{comment}</i>
     
     """)
@@ -171,10 +175,13 @@ def setup_homework_module(Bot):
     ### Список ДЗ
     @Bot.message_handler(func=lambda message: message.text == "📔 ДЗ")
     @check_auth
-    @check_server_error
     def check_homeworks(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         homework_count = user_auths[message.from_user.id]["User_obj"].get_homework_count()
+
+        if homework_count == 500:
+            Bot.send_message(get_500_message(message))
+            return
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
 

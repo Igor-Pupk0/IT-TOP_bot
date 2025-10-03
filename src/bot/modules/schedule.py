@@ -3,7 +3,7 @@ import datetime
 from src.bot.modules.authorization import check_auth
 from src.bot.core.storage import user_auths
 from ..core.logs import logger
-from .journal_500 import check_server_error
+from ..core.journal_500 import get_500_message
 
 
 def setup_schedule_module(Bot: telebot.TeleBot):
@@ -19,6 +19,10 @@ def setup_schedule_module(Bot: telebot.TeleBot):
         if today_schedule == False:
             Bot.send_message(call.message.chat.id, f"{iso_date}: пар нет")
             return
+        elif today_schedule == 500:
+            Bot.send_message(get_500_message(call.message))
+            return
+
         msg_to_send = f'Расписание на <b>{iso_date}</b>:\n\n'
 
         for lesson_json in today_schedule:
@@ -44,7 +48,6 @@ def setup_schedule_module(Bot: telebot.TeleBot):
     ### Отправить расписание
     @Bot.callback_query_handler(func= lambda call: "_schedule" in call.data )
     @check_auth
-    @check_server_error
     def call_schedule(call):
         if "_day_schedule" in call.data:
             send_schedule(call, call.data[:10])
@@ -52,7 +55,6 @@ def setup_schedule_module(Bot: telebot.TeleBot):
     ### Список расписаний
     @Bot.message_handler(func=lambda message: message.text == "📅 Раписание")
     @check_auth
-    @check_server_error
     def check_schedule(message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
