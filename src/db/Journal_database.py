@@ -54,3 +54,11 @@ class Creds_db:
         self.cursor.execute("DELETE FROM Users WHERE telegram_id = ?", (telegram_id,))
         self.connection.commit()
         self.connection.close()
+
+    def get_all_telegram_ids(self):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("SELECT telegram_id FROM Users")
+        user_data = self.cursor.fetchall()
+        self.connection.close()
+        return user_data

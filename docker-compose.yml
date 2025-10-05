@@ -11,6 +11,7 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - WEBHOOK_URL=${WEBHOOK_URL}
       - WEBHOOK_ENDPOINT=${WEBHOOK_ENDPOINT}
+      - DEV_TELEGRAM_ID=${DEV_TELEGRAM_ID}
     networks:
       - botnet
 

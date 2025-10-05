@@ -17,4 +17,6 @@ class User:
         # main/schedule
         self.active_menu = "main"
 
+        self.broadcast_typing_status = False
+
     

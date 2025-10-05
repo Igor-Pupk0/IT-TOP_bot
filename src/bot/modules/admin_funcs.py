@@ -1,0 +1,88 @@
+import telebot
+from ..core.storage import DEV_TELEGRAM_ID
+from ..core.logs import logger
+from ...db.Journal_database import Creds_db
+from ..core.states import get_user_status
+from ..core.keyboards import make_return_button
+import time
+
+checked_admins = []
+
+def setup_admin_module(Bot: telebot.TeleBot):
+    global bot
+    bot = Bot
+
+    @bot.message_handler(commands=['skibidi_admin'])
+    @check_on_dev
+    def admin_panel(message: telebot.types.Message):
+
+        keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
+        broadcast_button = telebot.types.InlineKeyboardButton("📣 Broadcast", callback_data="admin_broadcast")
+
+        keyboard.add(broadcast_button, make_return_button())
+
+        bot.send_message(message.chat.id, "Чтооо админка???", reply_markup=keyboard)
+
+    broadcasts()
+
+
+def broadcasts():
+
+
+
+    @bot.callback_query_handler(func= lambda call: "admin_broadcast" == call.data)
+    @check_on_dev
+    def get_broadcast_message(call: telebot.types.CallbackQuery):
+
+        bot.send_message(call.message.chat.id, "Введи сообщение для броадкаста")
+        get_user_status(call.from_user.id).broadcast_typing_status = True
+
+
+    @bot.message_handler(func= lambda message: get_user_status(message.from_user.id).broadcast_typing_status)
+    @check_on_dev
+    def send_broadcast(message: telebot.types.Message):
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) вызвал broadcast")
+        db_obj = Creds_db()
+
+        telegram_ids: tuple = db_obj.get_all_telegram_ids()
+
+        for id in telegram_ids:
+            try:
+                bot.send_message(id[0], message.text)
+                time.sleep(1)
+            
+            except Exception as e:
+                if "chat not found" in str(e):
+                    logger.warning(f"При вызове broadcast, чат с id {id[0]} не был найден")
+                    continue
+
+                logger.critical(f"Ошибка при вызове broadcast: ", e)
+
+        get_user_status(message.from_user.id).auth_status = False
+
+        bot.send_message(message.chat.id, "✅ Broadcast успешно завершен")
+                
+
+def check_on_dev(func):
+    def wrapper(message: telebot.types.CallbackQuery):
+        if message.from_user.id in checked_admins:
+            return func(message)
+        
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) проверяется на права админа")
+
+        if DEV_TELEGRAM_ID == None:
+            logger.warning(f"Администратор не указан")
+
+        if int(DEV_TELEGRAM_ID) != message.from_user.id:
+            bot.send_message(message.chat.id, "Ты не админ, я тебя найду гандон чорт бля хули ты в админку ломишься пидарасина бля")
+            return
+        
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) прошел проверку на админа")
+        checked_admins.append(message.from_user.id)
+
+        return func(message)
+    
+    return wrapper
+
+
+

@@ -6,6 +6,7 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 ENV = os.getenv("BOT_ENV")
 WEBHOOK_ENDPOINT = os.getenv("WEBHOOK_ENDPOINT")
 SUPPORT_USERNAME = "igor_ppk_help_bot"
+DEV_TELEGRAM_ID = os.getenv("DEV_TELEGRAM_ID")
 
 db_obj = Creds_db()
 users_states = {} # Состояния пользователей
