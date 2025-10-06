@@ -1,8 +1,14 @@
 ###
 ### Просто для удобства, чтобы хранить не словарь, а класс
 ###
+
+from ...api.Journal_API import API
+
 class User:
-    def __init__(self):
+    def __init__(self, user_obj = None):
+
+        self.API: API = user_obj
+
         # У auth_status есть 4 состояния:
         # 1) "No_auth" - без авторизации
         # 2) "Auth_on_username" - проходит авторизация, бот ждет логина

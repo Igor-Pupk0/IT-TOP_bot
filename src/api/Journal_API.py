@@ -10,6 +10,24 @@ import json
 API_HOST = "msapi.top-academy.ru"
 
 class API:
+
+    def status_code_checker(self, response: requests.Response):
+            if response.status_code != 200:
+                if response.status_code == 401:
+                    raise Exception("Unauthorized")
+                elif response.status_code == 500:
+                    raise Exception("Server error")
+
+                raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
+
+
+    def exception_handler(self, ex, response):
+            print("Error in 'get_homework_count' func:", ex)
+            if str(ex) == "Unauthorized":
+                self.update_JWT_headers()
+            elif str(ex) == "Server error":
+                return response.status_code
+
     def __init__(self, USER: str, PASS: str, JWT_token = False):
         self.succesful_auth = False
         self.USER = USER
@@ -78,23 +96,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                if response.status_code != 200:
-                    if response.status_code == 401:
-                        raise Exception("Unauthorized")
-                    elif response.status_code == 500:
-                        raise Exception("Server error")
-                    
-                    raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
+                self.status_code_checker(response)
                 break
-            
             except Exception as e:
-                print("Error in 'get_schedule_by_date' func:", e)
-                if str(e) == "Unauthorized":
-                    self.update_JWT_headers()
-                    continue
-
-                elif str(e) == "Server error":
-                    return response.status_code
+                self.exception_handler(e, response)
 
 
         json_responce_obj = json.loads(response.text)
@@ -115,23 +120,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                if response.status_code != 200:
-                    if response.status_code == 401:
-                        raise Exception("Unauthorized")
-                    elif response.status_code == 500:
-                        raise Exception("Server error")
-
-                    raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
-                
+                self.status_code_checker(response)
                 break
-
             except Exception as e:
-                print("Error in 'get_homework' func:", e)
-                if str(e) == "Unauthorized":
-                    self.update_JWT_headers()
-                    continue
-                elif str(e) == "Server error":
-                    return response.status_code
+                self.exception_handler(e, response)
                 
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
@@ -146,23 +138,12 @@ class API:
         for _ in range(1, 4):
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
-
-                if response.status_code != 200:
-                    if response.status_code == 401:
-                        raise Exception("Unauthorized")
-                    elif response.status_code == 500:
-                        raise Exception("Server error")
-
-                    raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
+                self.status_code_checker(response)
                 break
-
             except Exception as e:
-                print("Error in 'get_homework_count' func:", e)
-                if str(e) == "Unauthorized":
-                    self.update_JWT_headers()
-                    continue
-                elif str(e) == "Server error":
-                    return response.status_code
+                self.exception_handler(e, response)
+                
+
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
             return False
@@ -174,3 +155,18 @@ class API:
 
         return homework_count_dict
     
+    def get_user_info(self) -> dict:
+        url = f"https://{API_HOST}/api/v2/settings/user-info"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                self.exception_handler(e, response)
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj

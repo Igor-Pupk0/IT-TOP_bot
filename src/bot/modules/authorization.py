@@ -31,7 +31,6 @@ def setup_auth_module(Bot: telebot.TeleBot):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел логин")
         username = message.text
         user_states = get_user_status(message.from_user.id)
-        user_states.auth_status = "No_auth"
         user_states.auth_status = "Auth_on_password"
         bot.send_message(message.chat.id, "Пароль:")
         user_auths[message.from_user.id] = {"username": username, "password": None}
@@ -71,7 +70,6 @@ def check_auth(func):
     @wraps(func)
     def wrapper(message_or_call):
         user_data = db_obj.get_all_by_telegram_id(message_or_call.from_user.id)
-        user_states = get_user_status(message_or_call.from_user.id)
 
 
         if user_auths.get(message_or_call.from_user.id) is None and user_data is not None:
@@ -80,6 +78,8 @@ def check_auth(func):
                 "password": user_data[1],
                 "User_obj": API(user_data[0], user_data[1], user_data[2])
             }
+
+        user_states = get_user_status(message_or_call.from_user.id)
 
         if user_data is None and user_states.auth_status == "No_auth":
             markup = telebot.types.InlineKeyboardMarkup()
