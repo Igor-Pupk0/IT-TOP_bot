@@ -63,6 +63,8 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
                         homework_file_path = hw["homework_stud"]["file_path"]
                         mark = hw["homework_stud"]["mark"]
                         comment = hw["homework_comment"]["text_comment"]
+                        text_answer = hw["homework_stud"]["stud_answer"]
+
 
                         homework_id = hw["id"]
 
@@ -80,6 +82,10 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
                         if comment == None:
                             comment = "Отсутствует"
 
+                        if text_answer == None:
+                            text_answer = "Отсутствует"
+
+
                         pages_obj.add_page(f"""\
 {homework_message_to_send}
 Страница: №{pages_obj.page_count + 1} из {homework_count["type_1"]}
@@ -91,6 +97,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
     - Оценка: <b>{mark}</b>
     - ДЗ: {clickable_pinned_file}
     - Выполненное ДЗ: {clickable_homework_file}
+    - Текстовый ответ: <i>{text_answer}</i>
     Комментарий по дз от препода: <i>{comment}</i>
 
     """, {"homework_id": homework_id})
@@ -111,6 +118,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
                         pinned_file_path = hw["file_path"]
                         homework_file_path = hw["homework_stud"]["file_path"]
                         homework_maded_id = hw["homework_stud"]["id"]
+                        text_answer = hw["homework_stud"]["stud_answer"]
                         comment = hw["comment"]
                         clickable_pinned_file = f'<a href="{pinned_file_path}">ТЫК</a>'
 
@@ -126,9 +134,9 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
                         else:
                             clickable_homework_file = f'<a href="{homework_file_path}">ТЫК</a>'
 
+                        if text_answer == None:
+                            text_answer = "Отсутствует"
 
-                        if comment == None:
-                            comment = "Отсутствует"
 
                         pages_obj.add_page(f"""\
 Страница: №{pages_obj.page_count + 1} из {homework_count["type_2"]}
@@ -140,7 +148,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
     - Крайний день: <b>{end_date}</b>
     - ДЗ: {clickable_pinned_file}
     - Выполненное ДЗ: {clickable_homework_file}
-    Комментарий: <i>{comment}</i>
+    - Текстовый ответ: <i>{text_answer}</i>
     
     """, {"homework_id": homework_id, "homework_maded_id": homework_maded_id})
 
