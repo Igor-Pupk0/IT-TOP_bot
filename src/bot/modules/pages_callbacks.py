@@ -1,10 +1,16 @@
 import telebot
-from src.bot.core.pages import Pages, messages_pages
+from ..core.pages import Pages, messages_pages
 
 def setup_pages_cb_module(bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: call.data in ["turn_left", "turn_right"])
     def turn_pages(call: telebot.types.CallbackQuery):
-        page_obj: Pages = messages_pages.get(call.message.message_id)
+        tmp = messages_pages.get(call.from_user.id)
+
+        if tmp == None:
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+            return
+
+        page_obj: Pages = tmp.get(call.message.message_id)
         
         if page_obj == None:
             bot.delete_message(call.message.chat.id, call.message.message_id)

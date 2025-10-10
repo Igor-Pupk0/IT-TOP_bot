@@ -34,7 +34,10 @@ def broadcasts():
     @check_on_dev
     def get_broadcast_message(call: telebot.types.CallbackQuery):
 
-        bot.send_message(call.message.chat.id, "Введи сообщение для броадкаста")
+        keyboard = telebot.types.InlineKeyboardMarkup()
+        cancel_button = telebot.types.InlineKeyboardButton("❌ Отмена", callback_data="return_broadcast")
+        keyboard.add(cancel_button)
+        bot.send_message(call.message.chat.id, "Введи сообщение для броадкаста", reply_markup=keyboard)
         get_user_status(call.from_user.id).broadcast_typing_status = True
 
 
@@ -42,6 +45,7 @@ def broadcasts():
     @check_on_dev
     def send_broadcast(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) вызвал broadcast")
+        get_user_status(message.from_user.id).broadcast_typing_status = False
         db_obj = Creds_db()
 
         telegram_ids: tuple = db_obj.get_all_telegram_ids()
@@ -57,8 +61,6 @@ def broadcasts():
                     continue
 
                 logger.critical(f"Ошибка при вызове broadcast: ", e)
-
-        get_user_status(message.from_user.id).auth_status = False
 
         bot.send_message(message.chat.id, "✅ Broadcast успешно завершен")
                 

@@ -25,4 +25,8 @@ class User:
 
         self.broadcast_typing_status = False
 
+        ### Параметры для сдачи ДЗ
+        self.writing_time = False
+        self.sending_text_answer = False
+        self.sending_homework_file = False
     

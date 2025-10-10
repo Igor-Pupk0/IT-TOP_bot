@@ -17,15 +17,22 @@ class API:
                     raise Exception("Unauthorized")
                 elif response.status_code == 500:
                     raise Exception("Server error")
+                elif response.status_code == 201:
+                    raise Exception("ALL OK!")
+                elif response.status_code == 204:
+                    raise Exception("No content")
 
                 raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
 
-
     def exception_handler(self, ex, response):
-            print("Error in 'get_homework_count' func:", ex)
+            print("Error in some func:", ex)
             if str(ex) == "Unauthorized":
                 self.update_JWT_headers()
             elif str(ex) == "Server error":
+                return response.status_code
+            elif str(ex) == "ALL OK!":
+                return response.status_code
+            elif str(ex) == "No content":
                 return response.status_code
 
     def __init__(self, USER: str, PASS: str, JWT_token = False):
@@ -166,6 +173,59 @@ class API:
                 break
             except Exception as e:
                 self.exception_handler(e, response)
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+    
+    def send_homework(self, homework_id: int, text_answer: str, homework_file_name:str = None, time_spent: str = "00:00", homework_file_bytes: bytes = None) -> dict:
+        url = f"https://{API_HOST}/api/v2/homework/operations/create"
+
+        time = time_spent.split(":")
+        time_hrs, time_min = time
+
+
+        post_data = {"id": homework_id,
+                "answerText": text_answer,
+                "spentTimeHour": time_hrs,
+                "spentTimeMin": time_min}
+        
+
+        if homework_file_bytes == None:
+            post_file = {"file": ""}
+        else:
+            post_file = {"file": (homework_file_name, homework_file_bytes, "*/*")}
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.post(url, headers=self.headers_with_JWT, data=post_data, files=post_file)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+    
+    def delete_homework(self, checkout_homework_id):
+        url = f"https://{API_HOST}/api/v2/homework/operations/delete"
+
+        post_data = {"id": checkout_homework_id}
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.post(url, headers=self.headers_with_JWT, data=post_data)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         

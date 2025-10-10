@@ -1,24 +1,24 @@
 import telebot
 import datetime
 
-from ..core.storage import user_auths
-from .authorization import check_auth
-from ..core.pages import Pages, messages_pages
-from ..core.keyboards import make_return_button, make_turn_pages_buttons
-from ..core.logs import logger
-from ..core.journal_500 import get_500_message
+from ..authorization import check_auth
+from ...core.pages import Pages, messages_pages
+from ...core.keyboards import make_return_button, make_turn_pages_buttons
+from ...core.logs import logger
+from ...core.journal_500 import get_500_message
+from ...core.states import get_user_status
 
-def setup_homework_module(Bot):
+def setup_get_homework_module(Bot: telebot.TeleBot):
 
-    ### Отправить рассписание
+    ### Отправить дз
     @Bot.callback_query_handler(func= lambda call: "_homework_show" in call.data )
     @check_auth
-    def call_send_homework(call: telebot.types.CallbackQuery):
+    def call_get_homeworks(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет посмотреть ДЗ под номером {call.data[0:1]}")
         today_date = datetime.datetime.today().isoformat()[:10]
         homework_message_to_send = ''
 
-        homework_count = user_auths[call.from_user.id]["User_obj"].get_homework_count()
+        homework_count = get_user_status(call.from_user.id).API.get_homework_count()
 
         if homework_count == 500:
             Bot.send_message(get_500_message(call.message))
@@ -26,13 +26,23 @@ def setup_homework_module(Bot):
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
         turn_left_button, turn_right_button = make_turn_pages_buttons()
-        keyboard.add(turn_left_button, turn_right_button, make_return_button())
+        keyboard.add(turn_left_button, turn_right_button)
+        
+        if call.data == "3_homework_show":
+            send_homework_button = telebot.types.InlineKeyboardButton("📚 Сдать ДЗ", callback_data="send_homework_menu")
+            keyboard.add(send_homework_button)
+        
+        elif call.data == "2_homework_show":
+            send_homework_button = telebot.types.InlineKeyboardButton("❌ Удалить", callback_data="delete_homework")
+            keyboard.add(send_homework_button)
+
+        keyboard.add(make_return_button())
 
         pages_obj = Pages()
 
         match call.data:
             case "0_homework_show":
-            #   homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(0, 1)
+            #   homework: dict = get_user_status(call.from_user.id).API.get_homework(0, 1)
                 
                 pages_obj.add_page("В разработке")
                 
@@ -41,7 +51,7 @@ def setup_homework_module(Bot):
                 pages_count = homework_count["type_1"] // 6 + 2
 
                 for page in range(1, pages_count):
-                    marked_homework = user_auths[call.from_user.id]["User_obj"].get_homework(1, page)
+                    marked_homework = get_user_status(call.from_user.id).API.get_homework(1, page)
 
 
                     for hw in marked_homework:
@@ -53,6 +63,8 @@ def setup_homework_module(Bot):
                         homework_file_path = hw["homework_stud"]["file_path"]
                         mark = hw["homework_stud"]["mark"]
                         comment = hw["homework_comment"]["text_comment"]
+
+                        homework_id = hw["id"]
 
                         if pinned_file_path == None:
                             clickable_pinned_file = "<i>Отсутствует</i>"
@@ -81,14 +93,14 @@ def setup_homework_module(Bot):
     - Выполненное ДЗ: {clickable_homework_file}
     Комментарий по дз от препода: <i>{comment}</i>
 
-    """)
+    """, {"homework_id": homework_id})
 
             case "2_homework_show":
                 homework_message_to_send = f"ДЗ, ожидающие проверки на <b>{today_date}:</b>\n\n"
                 pages_count = homework_count["type_2"] // 6 + 2
 
                 for page in range(1, pages_count):
-                    waited_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(2, page)
+                    waited_homework: dict = get_user_status(call.from_user.id).API.get_homework(2, page)
                     for hw in waited_homework:
                         start_date = hw["creation_time"]
                         end_date = hw["completion_time"]
@@ -98,8 +110,11 @@ def setup_homework_module(Bot):
                         theme = hw["theme"]
                         pinned_file_path = hw["file_path"]
                         homework_file_path = hw["homework_stud"]["file_path"]
+                        homework_maded_id = hw["homework_stud"]["id"]
                         comment = hw["comment"]
                         clickable_pinned_file = f'<a href="{pinned_file_path}">ТЫК</a>'
+
+                        homework_id = hw["id"]
 
                         if pinned_file_path == None:
                             clickable_pinned_file = "<i>Отсутствует</i>"
@@ -127,7 +142,7 @@ def setup_homework_module(Bot):
     - Выполненное ДЗ: {clickable_homework_file}
     Комментарий: <i>{comment}</i>
     
-    """)
+    """, {"homework_id": homework_id, "homework_maded_id": homework_maded_id})
 
 
             case "3_homework_show":
@@ -135,7 +150,7 @@ def setup_homework_module(Bot):
                 pages_count = homework_count["type_3"] // 6 + 2
 
                 for page in range(1, pages_count):
-                    actual_homework: dict = user_auths[call.from_user.id]["User_obj"].get_homework(3, page)
+                    actual_homework: dict = get_user_status(call.from_user.id).API.get_homework(3, page)
                     for hw in actual_homework:
                         start_date = hw["creation_time"]
                         end_date = hw["completion_time"]
@@ -144,6 +159,9 @@ def setup_homework_module(Bot):
                         pinned_file_path = hw["file_path"]
                         banner_image_path = hw["cover_image"]
                         comment = hw["comment"]
+
+                        homework_id = hw["id"]
+
                         if comment == "":
                             comment = "Отсутствует"
 
@@ -157,7 +175,7 @@ def setup_homework_module(Bot):
     - Прикрепленный файл: <a href="{pinned_file_path}">ТЫК</a>
     Комментарий: <i>{comment}</i>
 
-    """)
+    """, {"homework_id": homework_id, "lesson_name": lesson_name})
                 
         sended_message: telebot.types.Message = Bot.send_message(
             call.message.chat.id, 
@@ -166,18 +184,16 @@ def setup_homework_module(Bot):
             reply_markup=keyboard, 
             disable_web_page_preview=True)
         
-        messages_pages[sended_message.message_id] = pages_obj
+        messages_pages[call.from_user.id] = {sended_message.message_id: pages_obj}
         logger.info(f"Пользователю ({call.from_user.username}:{call.from_user.id}) отправлено ДЗ под номером {call.data[0:1]}")
-
-
 
 
     ### Список ДЗ
     @Bot.message_handler(func=lambda message: message.text == "📔 ДЗ")
     @check_auth
-    def check_homeworks(message: telebot.types.Message):
+    def get_homework_menu(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
-        homework_count = user_auths[message.from_user.id]["User_obj"].get_homework_count()
+        homework_count = get_user_status(message.from_user.id).API.get_homework_count()
 
         if homework_count == 500:
             Bot.send_message(get_500_message(message))
@@ -194,3 +210,4 @@ def setup_homework_module(Bot):
         keyboard.add(homework0_button, homework1_button, homework2_button, homework3_button, return_button)
 
         Bot.send_message(message.chat.id, "Выберите тип ДЗ которое вы хотите посмотреть:", reply_markup=keyboard)
+
