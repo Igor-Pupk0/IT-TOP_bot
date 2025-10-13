@@ -6,7 +6,7 @@ from functools import wraps
 import telebot
 from src.api.Journal_API import API
 from ..core.storage import db_obj, user_auths
-from ..core.states import get_user_status
+from ..core.states import get_user_status, delete_user_status
 from ..core.logs import logger
 
 def setup_auth_module(Bot: telebot.TeleBot):
@@ -58,11 +58,10 @@ def setup_auth_module(Bot: telebot.TeleBot):
 
     @bot.callback_query_handler(func= lambda call: call.data == "logout" )
     @check_auth
-    def logout(call):
+    def logout(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вышел из аккаунта")
         db_obj.delete_user_by_telegram_id(call.from_user.id)
-        if user_auths.get(call.message.from_user.id) != None:
-            user_auths.pop(call.message.from_user.id)
+        delete_user_status(call.from_user.id)
         bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта ✅")
 
 

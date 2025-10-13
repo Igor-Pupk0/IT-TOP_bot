@@ -19,3 +19,8 @@ def get_user_status(telegram_id):
     users_states[telegram_id] = user_states
     return user_states
 
+def delete_user_status(telegram_id):
+    if user_auths.get(telegram_id) != None:
+        user_auths.pop(telegram_id)
+    if users_states.get(telegram_id) != None:
+        users_states.pop(telegram_id)
