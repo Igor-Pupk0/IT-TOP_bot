@@ -28,7 +28,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         turn_left_button, turn_right_button = make_turn_pages_buttons()
         keyboard.add(turn_left_button, turn_right_button)
         
-        if call.data == "3_homework_show":
+        if call.data == "3_homework_show" or call.data == "5_homework_show":
             send_homework_button = telebot.types.InlineKeyboardButton("📚 Сдать ДЗ", callback_data="send_homework_menu")
             keyboard.add(send_homework_button)
         
@@ -185,6 +185,42 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
 
     """, {"homework_id": homework_id, "lesson_name": lesson_name})
                 
+
+            case "5_homework_show":
+                homework_message_to_send = f"Актуальное дз на <b>{today_date}:</b>\n\n"
+                pages_count = homework_count["type_5"] // 6 + 2
+
+                for page in range(1, pages_count):
+                    actual_homework: dict = get_user_status(call.from_user.id).API.get_homework(5, page)
+                    for hw in actual_homework:
+                        start_date = hw["creation_time"]
+                        end_date = hw["completion_time"]
+                        lesson_name = hw["name_spec"]
+                        theme = hw["theme"]
+                        pinned_file_path = hw["file_path"]
+                        banner_image_path = hw["cover_image"]
+                        comment = hw["comment"]
+                        about_delete_comment = hw["homework_comment"]["text_comment"]
+
+                        homework_id = hw["id"]
+
+                        if comment == "":
+                            comment = "Отсутствует"
+
+                        pages_obj.add_page(f"""\
+Страница: №{pages_obj.page_count + 1} из {homework_count["type_5"]}
+
+    ДЗ по {lesson_name}:
+    Тема: <i>{theme}</i>
+    - Когда задали: <b>{start_date}</b>
+    - До какого надо сделать: <b>{end_date}</b>
+    - Прикрепленный файл: <a href="{pinned_file_path}">ТЫК</a>
+    Комментарий: <i>{comment}</i>
+    Комментарий по удаленной работе: <i>{about_delete_comment}</i>
+
+    """, {"homework_id": homework_id, "lesson_name": lesson_name})
+
+
         sended_message: telebot.types.Message = Bot.send_message(
             call.message.chat.id, 
             pages_obj.get_page(), 
@@ -194,6 +230,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         
         messages_pages[call.from_user.id] = {sended_message.message_id: pages_obj}
         logger.info(f"Пользователю ({call.from_user.username}:{call.from_user.id}) отправлено ДЗ под номером {call.data[0:1]}")
+
 
 
     ### Список ДЗ
@@ -214,8 +251,9 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         homework1_button = telebot.types.InlineKeyboardButton(f"✔️ Оцененное ({homework_count["type_1"]})", callback_data=f"1_homework_show")
         homework2_button = telebot.types.InlineKeyboardButton(f"⏳ На проверке ({homework_count["type_2"]})", callback_data=f"2_homework_show")
         homework3_button = telebot.types.InlineKeyboardButton(f"🖊 Актуальное ({homework_count["type_3"]})", callback_data=f"3_homework_show")
+        homework5_button = telebot.types.InlineKeyboardButton(f"❔ Отмененное ({homework_count["type_5"]})", callback_data=f"5_homework_show")
         return_button = return_button = telebot.types.InlineKeyboardButton("🔙 Назад", callback_data="return_main")
-        keyboard.add(homework0_button, homework1_button, homework2_button, homework3_button, return_button)
+        keyboard.add(homework0_button, homework1_button, homework2_button, homework3_button, homework5_button, return_button)
 
         Bot.send_message(message.chat.id, "Выберите тип ДЗ которое вы хотите посмотреть:", reply_markup=keyboard)
 
