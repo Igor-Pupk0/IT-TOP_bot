@@ -3,3 +3,4 @@ requests
 watchdog
 psutil
 flask
+jinja2

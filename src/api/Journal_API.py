@@ -58,6 +58,7 @@ class API:
         self.headers_with_JWT["Authorization"] = "Bearer " + self.JWT_TOKEN
         self.succesful_auth = True
 
+
     def get_JWT_token(self, username: str, password: str, headers_start: dict) -> str:
         url = "https://" + API_HOST + "/api/v2/auth/login"
         json_data = {
@@ -86,7 +87,6 @@ class API:
                 return False
             elif str(e) == "Server error":
                 return response.status_code
-
 
     def update_JWT_headers(self):
         self.JWT_TOKEN = self.get_JWT_token(self.USER, self.PASS, self.headers_with_JWT)
@@ -137,7 +137,6 @@ class API:
             return False
         
         return json_responce_obj
-
 
     def get_homework_count(self) -> dict:
         url = f"https://{API_HOST}/api/v2/count/homework?type=0"
@@ -226,6 +225,23 @@ class API:
                 code = self.exception_handler(e, response)
                 if code != None:
                     return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+    
+
+    def get_marks(self):
+        url = f"https://{API_HOST}/api/v2/progress/operations/student-visits"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                self.exception_handler(e, response)
                 
         json_responce_obj = json.loads(response.text)
         

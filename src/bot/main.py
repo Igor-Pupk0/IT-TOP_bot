@@ -11,6 +11,7 @@ from .modules.authorization import setup_auth_module
 from .modules.admin_funcs import setup_admin_module
 from .modules.homework.send_homework import setup_send_homework_module
 from .modules.homework.delete_homework import setup_delete_homework_module
+from .modules.marks import setup_marks_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -25,3 +26,4 @@ setup_pages_cb_module(bot)
 setup_admin_module(bot)
 setup_send_homework_module(bot)
 setup_delete_homework_module(bot)
+setup_marks_module(bot)
