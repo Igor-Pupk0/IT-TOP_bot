@@ -15,7 +15,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
         return_button = telebot.types.InlineKeyboardButton("🔙 Назад", callback_data="return")
         return_keyboard.add(return_button)
 
-        today_schedule = get_user_status(call.from_user.id).get_schedule_by_date(iso_date)
+        today_schedule = get_user_status(call.from_user.id).API.get_schedule_by_date(iso_date)
         if today_schedule == False:
             Bot.send_message(call.message.chat.id, f"{iso_date}: пар нет")
             return
