@@ -28,8 +28,13 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         turn_left_button, turn_right_button = make_turn_pages_buttons()
         keyboard.add(turn_left_button, turn_right_button)
         
-        if call.data == "3_homework_show" or call.data == "5_homework_show":
+        if call.data == "3_homework_show":
             send_homework_button = telebot.types.InlineKeyboardButton("📚 Сдать ДЗ", callback_data="send_homework_menu")
+            keyboard.add(send_homework_button)
+
+
+        elif call.data == "5_homework_show" or call.data == "1_homework_show":
+            send_homework_button = telebot.types.InlineKeyboardButton("📚 Пересдать", callback_data="send_homework_menu")
             keyboard.add(send_homework_button)
         
         elif call.data == "2_homework_show":
@@ -100,7 +105,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
     - Текстовый ответ: <i>{text_answer}</i>
     Комментарий по дз от препода: <i>{comment}</i>
 
-    """, {"homework_id": homework_id})
+    """, {"homework_id": homework_id, "lesson_name": lesson_name})
 
             case "2_homework_show":
                 homework_message_to_send = f"ДЗ, ожидающие проверки на <b>{today_date}:</b>\n\n"
