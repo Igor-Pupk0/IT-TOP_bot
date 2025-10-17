@@ -231,7 +231,7 @@ class API:
         return json_responce_obj
     
 
-    def get_marks(self):
+    def get_marks(self) -> dict:
         url = f"https://{API_HOST}/api/v2/progress/operations/student-visits"
         
         for _ in range(1, 4):
@@ -242,6 +242,50 @@ class API:
                 break
             except Exception as e:
                 self.exception_handler(e, response)
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+
+
+    def get_lessons_for_feedback(self) -> dict:
+        url = f"https://{API_HOST}/api/v2/feedback/students/evaluate-lesson-list"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                self.exception_handler(e, response)
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+    
+    def send_lesson_feedback(self, lesson_key: str):
+        url = f"https://{API_HOST}/api/v2/feedback/students/evaluate-lesson"
+
+        post_data = {"mark_lesson":5,
+                     "mark_teach":5,
+                     "key": lesson_key,
+                     "tags_lesson":[],
+                     "tags_teach":[],
+                     "comment_lesson":"",
+                     "comment_teach":""}
+        
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.post(url, headers=self.headers_with_JWT, data=post_data)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         

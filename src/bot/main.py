@@ -1,5 +1,5 @@
 import telebot
-from src.bot.core.storage import TOKEN
+from .core.storage import TOKEN
 
 from .modules.menu_returns import setup_returns_module
 from .modules.profile import setup_profile_module
@@ -12,7 +12,8 @@ from .modules.admin_funcs import setup_admin_module
 from .modules.homework.send_homework import setup_send_homework_module
 from .modules.homework.delete_homework import setup_delete_homework_module
 from .modules.marks import setup_marks_module
-
+from .modules.some_funcs.menu import setup_some_module
+from .modules.some_funcs.rate_all_lessons import setup_rate_lessons_module
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -27,3 +28,5 @@ setup_admin_module(bot)
 setup_send_homework_module(bot)
 setup_delete_homework_module(bot)
 setup_marks_module(bot)
+setup_some_module(bot)
+setup_rate_lessons_module(bot)

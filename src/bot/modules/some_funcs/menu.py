@@ -1,0 +1,20 @@
+import telebot
+from ..authorization import check_auth
+from ...core.logs import logger
+from ...core.keyboards import make_return_button
+
+def setup_some_module(bot: telebot.TeleBot):
+    @bot.message_handler(func=lambda message: message.text == "🐥 Разное")
+    @check_auth
+    def handle_message(message: telebot.types.Message):
+        logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
+
+        profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
+        logout_button = telebot.types.InlineKeyboardButton("Оценка пар", callback_data="rate_all_lessons")
+        profile_keyboard.add(logout_button, make_return_button())
+
+        bot.send_message(message.chat.id,
+                        f"Разные функции и кнопочки", 
+                        reply_markup=profile_keyboard,
+                        parse_mode="HTML")
+

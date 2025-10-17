@@ -25,7 +25,8 @@ def generate_start_message() -> str:
         telebot.types.KeyboardButton("📅 Раписание"),
         telebot.types.KeyboardButton("🕵🏿‍♂️ Профиль"),
         telebot.types.KeyboardButton("📔 ДЗ"),
-        telebot.types.KeyboardButton("5️⃣ Оценки")
+        telebot.types.KeyboardButton("5️⃣ Оценки"),
+        telebot.types.KeyboardButton("🐥 Разное")
     )
     text = f"Это Айте топ бот, тут можно смотреть расписание и дз\nБот еще в разработке, связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>"
     return (text, keyboard)
