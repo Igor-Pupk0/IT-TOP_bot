@@ -50,7 +50,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                                                 notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>12 часов</b>",
                                                 parse_mode="HTML")
                         else:
-                            if hours < 6.5 or hours > 5.5:
+                            if hours < 6.5 and hours > 5.5:
                                 bot.send_message(user_id,
                                                     notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
                                                     parse_mode="HTML")
