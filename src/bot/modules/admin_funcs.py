@@ -8,6 +8,10 @@ import time
 
 checked_admins = []
 
+broadcast_prefix = """⚠️Скибиди админ пишет:
+
+"""
+
 def setup_admin_module(Bot: telebot.TeleBot):
     global bot
     bot = Bot
@@ -52,7 +56,7 @@ def broadcasts():
 
         for id in telegram_ids:
             try:
-                bot.send_message(id[0], message.text)
+                bot.send_message(id[0], broadcast_prefix + message.text)
                 time.sleep(1)
             
             except Exception as e:

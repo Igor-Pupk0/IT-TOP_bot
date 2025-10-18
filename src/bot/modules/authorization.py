@@ -92,3 +92,22 @@ def check_auth(func):
         return func(message_or_call)
     return wrapper
 
+def load_user(func):
+    @wraps(func)
+    def wrapper(bot, user_id):
+        user_data = db_obj.get_all_by_telegram_id(user_id)
+
+
+        if user_auths.get(user_id) is None and user_data is not None:
+            user_auths[user_id] = {
+                "username": user_data[0],
+                "password": user_data[1],
+                "User_obj": API(user_data[0], user_data[1], user_data[2])
+            }
+
+
+        if user_data and user_data[2] == 'None':
+            db_obj.update_user_JWT_token(user_data[0], user_auths[user_id]["User_obj"].JWT_TOKEN)
+
+        return func(bot, user_id)
+    return wrapper

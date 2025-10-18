@@ -25,8 +25,18 @@ def setup_schedule_module(Bot: telebot.TeleBot):
 
         msg_to_send = f'Расписание на <b>{iso_date}</b>:\n\n'
 
+        tmp_lesson_number = 1488
+
         for lesson_json in today_schedule:
+
             lesson_number = lesson_json["lesson"]
+            if tmp_lesson_number + 1 < lesson_number:
+                msg_to_send += """\
+        <b>ОКНО</b>
+
+"""
+            lesson_number = lesson_json["lesson"]
+            tmp_lesson_number = lesson_number
             start_time = lesson_json["started_at"]
             end_time = lesson_json["finished_at"]
             teacher = lesson_json["teacher_name"]

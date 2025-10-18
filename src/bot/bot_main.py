@@ -15,6 +15,9 @@ from .modules.marks import setup_marks_module
 from .modules.some_funcs.menu import setup_some_module
 from .modules.some_funcs.rate_all_lessons import setup_rate_lessons_module
 
+from .notifications.notifications_main import init_notifications
+
+
 bot = telebot.TeleBot(TOKEN)
 
 setup_start_module(bot)
@@ -30,3 +33,5 @@ setup_delete_homework_module(bot)
 setup_marks_module(bot)
 setup_some_module(bot)
 setup_rate_lessons_module(bot)
+
+init_notifications(bot)

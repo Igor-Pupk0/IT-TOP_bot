@@ -3,7 +3,7 @@ from src.bot.core.storage import ENV
 
 if __name__ == "__main__":
     logger.info("Бот запущен")
-    from src.bot.main import bot
+    from src.bot.bot_main import bot
     try:
         if ENV == "prod":
             from src.bot.webhooks import setup_webhooks_module
