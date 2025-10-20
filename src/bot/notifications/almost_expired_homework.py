@@ -44,22 +44,19 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                         bot.send_message(user_id,
                                             notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>24 часов</b>",
                                             parse_mode="HTML")
-                    else:
-                        if hours < 12.5 and hours > 11.5:
+                    elif hours < 12.5 and hours > 11.5:
+                        bot.send_message(user_id,
+                                            notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>12 часов</b>",
+                                            parse_mode="HTML")
+                    elif hours < 6.5 and hours > 5.5:
                             bot.send_message(user_id,
-                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>12 часов</b>",
+                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
                                                 parse_mode="HTML")
-                        else:
-                            if hours < 6.5 and hours > 5.5:
-                                bot.send_message(user_id,
-                                                    notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
-                                                    parse_mode="HTML")
-                            else:
-                                if hours < 1:
-                                    bot.send_message(user_id, 
-                                                        notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось меньше <b>часа!</b>",
-                                                        parse_mode="HTML")
-                                    
+                    elif hours < 1:
+                            bot.send_message(user_id, 
+                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось меньше <b>часа!</b>",
+                                                parse_mode="HTML")
+                            
 
 
                                 
