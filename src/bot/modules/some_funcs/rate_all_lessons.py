@@ -28,7 +28,7 @@ def setup_rate_lessons_module(bot: telebot.TeleBot):
             count += 1
 
 
-        bot.send_message(call.chat.id,
+        bot.send_message(call.message.chat.id,
                         f"Было оценено <i>{count}</i> пар!", 
                         parse_mode="HTML")
 
