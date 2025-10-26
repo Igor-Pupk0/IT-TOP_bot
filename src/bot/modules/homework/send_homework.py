@@ -66,8 +66,9 @@ def setup_send_homework_module(bot: telebot.TeleBot):
             time_hrs, time_min = time
 
             if int(time_min) > 59 or int(time_min) < 1 or len(time_min) != 2:
-                bot.send_message(message.chat.id, "Неправильно установлены минуты")
-                return
+                if not (int(time_min) == 0 and int(time_hrs) != 0):
+                    bot.send_message(message.chat.id, "Неправильно установлены минуты")
+                    return
             elif int(time_hrs) > 99 or int(time_hrs) < 0 or len(time_hrs) != 2:
                 bot.send_message(message.chat.id, "Неправильно установлены часы")
                 return
@@ -167,7 +168,7 @@ def setup_send_homework_module(bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: "send_homework" == call.data )
     @check_auth
     def call_checkout_homework(call: telebot.types.CallbackQuery):
-        hw_data = homework_pages_data.get(call.from_user.id)
+        hw_data: dict = homework_pages_data.get(call.from_user.id)
         if hw_data == None:
             bot.send_message(call.message.chat.id, "Вы не заполнили все необходимые поля! (время, файл/текстовый ответ)")
             return

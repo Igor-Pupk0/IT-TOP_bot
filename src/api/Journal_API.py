@@ -191,7 +191,7 @@ class API:
         
 
         if homework_file_bytes == None:
-            post_file = {"file": ""}
+            post_file = {}
         else:
             post_file = {"file": (homework_file_name, homework_file_bytes, "*/*")}
         
