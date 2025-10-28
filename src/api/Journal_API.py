@@ -290,3 +290,21 @@ class API:
         json_responce_obj = json.loads(response.text)
         
         return json_responce_obj
+
+    def get_student_feedbacks(self):
+        url = f"https://{API_HOST}/api/v2/reviews/index/list"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
