@@ -113,7 +113,3 @@ def load_user(func):
     return wrapper
 
 
-def logout(telegram_id):
-    logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
-    db_obj.delete_user_by_telegram_id(telegram_id)
-    delete_user_status(telegram_id)
