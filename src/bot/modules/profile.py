@@ -6,6 +6,7 @@ from ..core.keyboards import make_return_button
 from ..core.journal_500 import get_500_message
 from ..core.storage import db_obj
 
+
 def setup_profile_module(bot: telebot.TeleBot):
     @bot.message_handler(func=lambda message: message.text == "🕵🏿‍♂️ Профиль")
     @check_auth

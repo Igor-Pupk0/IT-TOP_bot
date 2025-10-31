@@ -4,7 +4,8 @@
 ###
 
 from src.db.Journal_database import Creds_db
-from src.bot.modules.profile import logout
+from src.bot.core.logs import logger
+from src.bot.core.states import delete_user_status
 import requests
 import json
 
@@ -314,3 +315,8 @@ class API:
         json_responce_obj = json.loads(response.text)
         
         return json_responce_obj
+
+def logout(telegram_id):
+    logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
+    Creds_db.delete_user_by_telegram_id(telegram_id)
+    delete_user_status(telegram_id)
