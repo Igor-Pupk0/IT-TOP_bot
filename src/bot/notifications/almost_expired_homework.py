@@ -52,25 +52,21 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                             bot.send_message(user_id,
                                                 notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
                                                 parse_mode="HTML")
-                    elif hours < 1:
+                    elif hours < 1.5:
                             bot.send_message(user_id, 
-                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось меньше <b>часа!</b>",
+                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>часа!</b>",
                                                 parse_mode="HTML")
-                            
-
-
-                                
-
-                            
-
                         
-                except:
-                    pass
+                except Exception as e:
+                    if "chat not found" in str(e):
+                        logger.warning(f"При вызове broadcast, чат с id {id[0]} не был найден")
+                        continue
+
+                    logger.critical(f"Ошибка при вызове broadcast: ", e)
 
 
 def check_homework_cycle(bot: telebot.TeleBot):
     while True:
-        time.sleep(ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC)
         logger.info("Начинаю рассылку уведомлении о скорой просрочке дз")
         users_ids = db_obj.get_all_telegram_ids()
 
@@ -78,7 +74,7 @@ def check_homework_cycle(bot: telebot.TeleBot):
             check_homework(bot, user_id[0])
             time.sleep(1)
         logger.info("Рассылка уведомлении о скорой просрочке дз завершена")
-
+        time.sleep(ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC)
 
 def init_almost_expired_homework_notification(bot):
     threading.Thread(target=check_homework_cycle, args=[bot], daemon=True).start()
