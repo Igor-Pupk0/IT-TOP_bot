@@ -4,6 +4,7 @@
 ###
 
 from src.db.Journal_database import Creds_db
+from src.bot.modules.profile import logout
 import requests
 import json
 
@@ -27,7 +28,10 @@ class API:
     def exception_handler(self, ex, response):
             print("Error in some func:", ex)
             if str(ex) == "Unauthorized":
-                self.update_JWT_headers()
+                res = self.update_JWT_headers()
+                if res == "Account has wrong creds":
+                    telegram_id = Creds_db.get_telegram_id_by_JWT_token(self.headers_with_JWT[["Authorization"][7:]])
+                    logout(telegram_id)
             elif str(ex) == "Server error":
                 return response.status_code
             elif str(ex) == "ALL OK!":
@@ -90,8 +94,10 @@ class API:
 
     def update_JWT_headers(self):
         self.JWT_TOKEN = self.get_JWT_token(self.USER, self.PASS, self.headers_with_JWT)
+        if type(self.JWT_TOKEN) != str:
+            return "Account has wrong creds"
+        
         self.headers_with_JWT["Authorization"] = "Bearer " + self.JWT_TOKEN
-
         db_obj = Creds_db()
         db_obj.update_user_JWT_token(self.USER, self.JWT_TOKEN)
 

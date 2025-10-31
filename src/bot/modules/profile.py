@@ -1,9 +1,10 @@
 import telebot
 from .authorization import check_auth
 from ..core.logs import logger
-from ..core.states import get_user_status
+from ..core.states import get_user_status, delete_user_status
 from ..core.keyboards import make_return_button
 from ..core.journal_500 import get_500_message
+from ..core.storage import db_obj
 
 def setup_profile_module(bot: telebot.TeleBot):
     @bot.message_handler(func=lambda message: message.text == "🕵🏿‍♂️ Профиль")
@@ -47,3 +48,8 @@ f"""\
                         reply_markup=profile_keyboard,
                         parse_mode="HTML")
 
+
+def logout(telegram_id):
+    logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
+    db_obj.delete_user_by_telegram_id(telegram_id)
+    delete_user_status(telegram_id)

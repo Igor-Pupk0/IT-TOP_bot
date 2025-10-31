@@ -62,3 +62,11 @@ class Creds_db:
         user_data = self.cursor.fetchall()
         self.connection.close()
         return user_data
+
+    def get_telegram_id_by_JWT_token(self, JWT_TOKEN: str):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("SELECT telegram_id FROM Users WHERE JWT_token = ?", (JWT_TOKEN,))
+        user_data = self.cursor.fetchone()
+        self.connection.close()
+        return user_data

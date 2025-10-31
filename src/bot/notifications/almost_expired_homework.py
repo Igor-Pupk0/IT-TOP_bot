@@ -59,10 +59,10 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                         
                 except Exception as e:
                     if "chat not found" in str(e):
-                        logger.warning(f"При вызове broadcast, чат с id {id[0]} не был найден")
+                        logger.warning(f"При рассылке уведомлении о скорой просрочке дз, чат с id {id[0]} не был найден")
                         continue
 
-                    logger.critical(f"Ошибка при вызове broadcast: ", e)
+                    logger.critical(f"Ошибка при рассылке уведомлении о скорой просрочке дз: ", e)
 
 
 def check_homework_cycle(bot: telebot.TeleBot):
