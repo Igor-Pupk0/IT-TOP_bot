@@ -31,7 +31,7 @@ class API:
             if str(ex) == "Unauthorized":
                 res = self.update_JWT_headers()
                 if res == "Account has wrong creds":
-                    telegram_id = Creds_db.get_telegram_id_by_JWT_token(self.headers_with_JWT[["Authorization"][7:]])
+                    telegram_id = Creds_db.get_telegram_id_by_JWT_token(self.headers_with_JWT[["Authorization"]][7:])
                     logout(telegram_id)
             elif str(ex) == "Server error":
                 return response.status_code
