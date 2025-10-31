@@ -31,7 +31,8 @@ class API:
             if str(ex) == "Unauthorized":
                 res = self.update_JWT_headers()
                 if res == "Account has wrong creds":
-                    telegram_id = Creds_db.get_telegram_id_by_JWT_token(self.headers_with_JWT["Authorization"][7:])
+                    db_obj = Creds_db()
+                    telegram_id = db_obj.get_telegram_id_by_JWT_token(self.headers_with_JWT["Authorization"][7:])
                     logout(telegram_id)
             elif str(ex) == "Server error":
                 return response.status_code
@@ -318,5 +319,6 @@ class API:
 
 def logout(telegram_id):
     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
-    Creds_db.delete_user_by_telegram_id(telegram_id)
+    db_obj = Creds_db()
+    db_obj.delete_user_by_telegram_id(telegram_id)
     delete_user_status(telegram_id)
