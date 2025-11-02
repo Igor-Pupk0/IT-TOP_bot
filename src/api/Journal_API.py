@@ -28,13 +28,13 @@ class API:
 
     def exception_handler(self, ex, response):
             print("Error in some func:", ex)
-            if str(ex) == "Unauthorized":
+            if str(ex) == "Unauthorized" or str(ex) == "Invalid creds":
                 res = self.update_JWT_headers()
                 if res == "Account has wrong creds":
                     db_obj = Creds_db()
                     telegram_id = db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
-                        return
+                        return "Account has wrong creds"
                     logout(telegram_id[0])
             elif str(ex) == "Server error":
                 return response.status_code
@@ -167,6 +167,8 @@ class API:
         homework_count_dict = {}
 
         for i in json_responce_obj:
+            if type(i) != dict:
+                continue
             homework_count_dict[ f'type_{i["counter_type"]}' ] = i["counter"]
 
         return homework_count_dict

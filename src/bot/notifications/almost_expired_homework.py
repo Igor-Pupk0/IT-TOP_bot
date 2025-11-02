@@ -24,7 +24,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
 
     homework_count = get_user_status(user_id).API.get_homework_count()
     
-    if homework_count == 500:
+    if homework_count == 500 or homework_count == {}:
         return
     
     pages_count = homework_count["type_3"] // 6 + 2
