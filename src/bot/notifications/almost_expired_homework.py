@@ -61,8 +61,12 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                     if "chat not found" in str(e):
                         logger.warning(f"При рассылке уведомлении о скорой просрочке дз, чат с id {id[0]} не был найден")
                         continue
+                    elif "user is deactivated" in str(e):
+                        logger.warning(f"При рассылке уведомлении о скорой просрочке дз, аккаунт с id {id[0]} был деактивирован")
+                        continue
 
                     logger.critical(f"Ошибка при рассылке уведомлении о скорой просрочке дз: ", e)
+                    continue
 
 
 def check_homework_cycle(bot: telebot.TeleBot):

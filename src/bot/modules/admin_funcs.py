@@ -63,8 +63,12 @@ def broadcasts():
                 if "chat not found" in str(e):
                     logger.warning(f"При вызове broadcast, чат с id {id[0]} не был найден")
                     continue
+                elif "user is deactivated" in str(e):
+                    logger.warning(f"При вызове broadcast, аккаунт с id {id[0]} был деактивирован")
+                    continue
 
                 logger.critical(f"Ошибка при вызове broadcast: ", e)
+                continue
 
         bot.send_message(message.chat.id, "✅ Broadcast успешно завершен")
                 
