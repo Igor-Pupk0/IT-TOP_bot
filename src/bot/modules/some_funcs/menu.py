@@ -12,7 +12,8 @@ def setup_some_module(bot: telebot.TeleBot):
         profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
         logout_button = telebot.types.InlineKeyboardButton("✡️ Оценка пар", callback_data="rate_all_lessons")
         feedbacks_button = telebot.types.InlineKeyboardButton("⭐️ Отзывы", callback_data="show_student_feedbacks")
-        profile_keyboard.add(logout_button, feedbacks_button, make_return_button())
+        market_button = telebot.types.InlineKeyboardButton("💰 Маркет", callback_data="show_market")
+        profile_keyboard.add(logout_button, feedbacks_button, market_button, make_return_button())
 
         bot.send_message(message.chat.id,
                         f"Разные функции и кнопочки", 

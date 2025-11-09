@@ -320,6 +320,24 @@ class API:
         json_responce_obj = json.loads(response.text)
         
         return json_responce_obj
+    
+    def get_market_products(self):
+        url = f"https://{API_HOST}/api/v2/market/customer/product/list?page=1&type=0"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
 
 def logout(telegram_id):
     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")

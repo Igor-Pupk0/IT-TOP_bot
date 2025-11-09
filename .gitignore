@@ -3,3 +3,4 @@ config.json
 TODO
 creds.db
 logs.txt
+.env

@@ -71,6 +71,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
 
 def check_homework_cycle(bot: telebot.TeleBot):
     while True:
+        time.sleep(ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC)
         logger.info("Начинаю рассылку уведомлении о скорой просрочке дз")
         users_ids = db_obj.get_all_telegram_ids()
 
@@ -78,7 +79,7 @@ def check_homework_cycle(bot: telebot.TeleBot):
             check_homework(bot, user_id[0])
             time.sleep(1)
         logger.info("Рассылка уведомлении о скорой просрочке дз завершена")
-        time.sleep(ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC)
+        
 
 def init_almost_expired_homework_notification(bot):
     threading.Thread(target=check_homework_cycle, args=[bot], daemon=True).start()

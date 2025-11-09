@@ -16,6 +16,7 @@ from .modules.some_funcs.menu import setup_some_module
 from .modules.some_funcs.rate_all_lessons import setup_rate_lessons_module
 from .modules.some_funcs.feedbacks import setup_get_feedbacks_module
 from .notifications.notifications_main import init_notifications
+from .modules.some_funcs.market import setup_market_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -34,5 +35,6 @@ setup_marks_module(bot)
 setup_some_module(bot)
 setup_rate_lessons_module(bot)
 setup_get_feedbacks_module(bot)
+setup_market_module(bot)
 
 init_notifications(bot)
