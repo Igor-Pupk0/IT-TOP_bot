@@ -28,7 +28,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         turn_left_button, turn_right_button = make_turn_pages_buttons()
         keyboard.add(turn_left_button, turn_right_button)
         
-        if call.data == "3_homework_show":
+        if call.data == "3_homework_show" or call.data == "0_homework_show":
             send_homework_button = telebot.types.InlineKeyboardButton("📚 Сдать ДЗ", callback_data="send_homework_menu")
             keyboard.add(send_homework_button)
 
@@ -47,9 +47,36 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
 
         match call.data:
             case "0_homework_show":
-            #   homework: dict = get_user_status(call.from_user.id).API.get_homework(0, 1)
-                
-                pages_obj.add_page("В разработке")
+                homework_message_to_send = f"Просроченное дз на <b>{today_date}:</b>\n\n"
+                pages_count = homework_count["type_0"] // 6 + 2
+
+                for page in range(1, pages_count):
+                    actual_homework: dict = get_user_status(call.from_user.id).API.get_homework(0, page)
+                    for hw in actual_homework:
+                        start_date = hw["creation_time"]
+                        end_date = hw["completion_time"]
+                        lesson_name = hw["name_spec"]
+                        theme = hw["theme"]
+                        pinned_file_path = hw["file_path"]
+                        banner_image_path = hw["cover_image"]
+                        comment = hw["comment"]
+
+                        homework_id = hw["id"]
+
+                        if comment == "":
+                            comment = "Отсутствует"
+
+                        pages_obj.add_page(f"""\
+Страница: №{pages_obj.page_count + 1} из {homework_count["type_0"]}
+
+    ДЗ по {lesson_name}:
+    Тема: <i>{theme}</i>
+    - Когда задали: <b>{start_date}</b>
+    - До какого надо сделать: <b>{end_date}</b>
+    - Прикрепленный файл: <a href="{pinned_file_path}">ТЫК</a>
+    Комментарий: <i>{comment}</i>
+
+    """, {"homework_id": homework_id, "lesson_name": lesson_name})
                 
             case "1_homework_show":
                 homework_message_to_send = f"Оценки за дз на <b>{today_date}:</b>"
@@ -192,7 +219,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
                 
 
             case "5_homework_show":
-                homework_message_to_send = f"Актуальное дз на <b>{today_date}:</b>\n\n"
+                homework_message_to_send = f"Отмененное дз на <b>{today_date}:</b>\n\n"
                 pages_count = homework_count["type_5"] // 6 + 2
 
                 for page in range(1, pages_count):
