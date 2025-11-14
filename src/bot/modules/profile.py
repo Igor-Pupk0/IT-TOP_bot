@@ -14,8 +14,9 @@ def setup_profile_module(bot: telebot.TeleBot):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
 
         profile_keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
-        logout_button = telebot.types.InlineKeyboardButton("Выйти из аккаунта ❌", callback_data="logout")
-        profile_keyboard.add(logout_button, make_return_button())
+        logout_button = telebot.types.InlineKeyboardButton("❌ Выйти из аккаунта", callback_data="logout")
+        statistic_button = telebot.types.InlineKeyboardButton("📊 Статистика ", callback_data="show_statistic")
+        profile_keyboard.add(statistic_button, logout_button, make_return_button())
 
         
         user = get_user_status(message.from_user.id)

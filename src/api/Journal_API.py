@@ -339,6 +339,49 @@ class API:
         
         return json_responce_obj
 
+    def get_leader_tables_stats(self):
+        url_group = f"https://{API_HOST}/api/v2/dashboard/progress/leader-group-points"
+        url_stream = f"https://{API_HOST}/api/v2/dashboard/progress/leader-stream-points"
+        
+        for _ in range(1, 4):
+            try:
+                response_group = requests.get(url_group, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response_group)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response_group)
+                if code != None:
+                    return code
+                
+        for _ in range(1, 4):
+            try:
+                response_stream = requests.get(url_stream, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response_stream)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response_stream)
+                if code != None:
+                    return code
+                
+        json_responce_obj_stream = json.loads(response_stream.text)
+        json_responce_obj_group = json.loads(response_group.text)
+        
+        return {"stream": json_responce_obj_stream, "group": json_responce_obj_group}
+
+    def get_student_visits_procent(self):
+        responce = self.get_marks()
+
+        lessons_dont_was = 0
+
+        for i in responce:
+            if i.get("status_was") != 1:
+                lessons_dont_was += 1
+        
+        return round(100 - (lessons_dont_was / len(responce)) * 100, 1)
+                
+
 def logout(telegram_id):
     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
     db_obj = Creds_db()
