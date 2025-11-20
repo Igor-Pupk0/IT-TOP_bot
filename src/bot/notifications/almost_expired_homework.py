@@ -64,6 +64,9 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                     elif "user is deactivated" in str(e):
                         logger.warning(f"При рассылке уведомлении о скорой просрочке дз, аккаунт с id {user_id} был деактивирован")
                         continue
+                    elif "bot was blocked by the user" in str(e):
+                        logger.warning(f"При рассылке уведомлении о скорой просрочке дз, аккаунт с id {user_id} заблокировал бота")
+                        continue
 
                     logger.critical(f"Ошибка при рассылке уведомлении о скорой просрочке дз: ", e)
                     continue
