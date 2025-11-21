@@ -2,7 +2,6 @@ import telebot
 from ..authorization import check_auth
 from ...core.logs import logger
 from ...core.storage import settings_db_obj
-from ...core.states import get_user_status
 from ...core.keyboards import make_return_button
 from ...core.keyboards import make_return_button
 

@@ -16,6 +16,8 @@ def setup_send_homework_module(bot: telebot.TeleBot):
     def call_send_homework_menu(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет сдать ДЗ")
 
+
+
         user_homework_pages_data = homework_pages_data.get(call.from_user.id)
         if user_homework_pages_data == None:
             keyboard, hw_message = make_homework_message()
@@ -47,7 +49,8 @@ def setup_send_homework_module(bot: telebot.TeleBot):
     @check_auth
     def call_write_time(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вводит время для ДЗ")
-        bot.send_message(call.message.chat.id, "Отправьте время в формате ЧЧ:ММ (час, минута. Пояснение для Стаса)")
+        bot.send_message(call.message.chat.id, "Отправьте время в формате ЧЧ:ММ (час, минута. Пояснение для Стаса)",
+                         reply_markup=make_cancel_keyboard())
         get_user_status(call.from_user.id).writing_time = True
 
     @bot.message_handler(func= lambda message: get_user_status(message.from_user.id).writing_time)
@@ -85,12 +88,12 @@ def setup_send_homework_module(bot: telebot.TeleBot):
                         reply_markup=keyboard)
 
 
-
     @bot.callback_query_handler(func= lambda call: "homework_write_text_answer" == call.data )
     @check_auth
     def call_write_text_answer(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вводит текстовый ответ для ДЗ")
-        bot.send_message(call.message.chat.id, "Отправьте свой ответ (лимит 500 символов)")
+        bot.send_message(call.message.chat.id, "Отправьте свой ответ (лимит 1000 символов)",
+                         reply_markup=make_cancel_keyboard())
         get_user_status(call.from_user.id).sending_text_answer = True
 
     @bot.message_handler(func= lambda message: get_user_status(message.from_user.id).sending_text_answer)
@@ -104,8 +107,8 @@ def setup_send_homework_module(bot: telebot.TeleBot):
             bot.send_message(message.chat.id, "Ошибка, попробуйте запросить новое дз и через него снова сдать")
             return
 
-        if len(message.text) > 500:
-            bot.send_message(message.chat.id, f"Ответ превышает лимит в 500 символов (их {len(message.text)})")
+        if len(message.text) > 1000:
+            bot.send_message(message.chat.id, f"Ответ превышает лимит в 1000 символов (их {len(message.text)})")
             return
         
         user_homework_pages_data.update({"text_answer": message.text})
@@ -121,7 +124,8 @@ def setup_send_homework_module(bot: telebot.TeleBot):
     @check_auth
     def call_write_homework_file(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет отправить файл к ДЗ")
-        bot.send_message(call.message.chat.id, "Отправьте свой файл (Оправлять видео или фотокарточки файлом! Лимиты:\n - нельзя больше 99 мегабайт\n - Нельзя .txt и .csv файлы)")
+        bot.send_message(call.message.chat.id, "Отправьте свой файл (Оправлять видео или фотокарточки файлом! Лимиты:\n - нельзя больше 99 мегабайт\n - Нельзя .txt и .csv файлы)",
+                         reply_markup=make_cancel_keyboard())
         get_user_status(call.from_user.id).sending_homework_file = True
 
     @bot.message_handler(func= lambda message: get_user_status(message.from_user.id).sending_homework_file, content_types=['document'])
@@ -217,8 +221,23 @@ def setup_send_homework_module(bot: telebot.TeleBot):
 
         homework_pages_data.pop(call.from_user.id)
 
+    
+    @bot.callback_query_handler(func= lambda call: "homework_send_cancel" == call.data )
+    @check_auth
+    def call_cancel_sending_some(call: telebot.types.CallbackQuery):
+        user = get_user_status(call.from_user.id)
+        user.writing_time = False
+        user.sending_text_answer = False
+        user.sending_homework_file = False
 
+        bot.delete_message(call.message.chat.id, call.message)
+        
 
+def make_cancel_keyboard():
+    keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
+    cancel_button = telebot.types.InlineKeyboardButton("❌ Отмена", callback_data="homework_send_cancel")
+    keyboard.add(cancel_button)
+    return keyboard
 
 def make_homework_message(hw_data: dict = None):
     keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)

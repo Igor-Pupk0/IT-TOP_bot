@@ -380,7 +380,42 @@ class API:
                 lessons_dont_was += 1
         
         return round(100 - (lessons_dont_was / len(responce)) * 100, 1)
+
+    def get_leaderboard_group(self):
+        url = f"https://{API_HOST}/api/v2/dashboard/progress/leader-group"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj  
+
+    def get_leaderboard_stream(self):
+        url = f"https://{API_HOST}/api/v2/dashboard/progress/leader-stream"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj  
 
 def logout(telegram_id):
     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")

@@ -73,7 +73,7 @@ def broadcasts():
                     logger.warning(f"При вызове broadcast, аккаунт с id {id[0]} был деактивирован")
                     continue
                 elif "bot was blocked by the user" in str(e):
-                    logger.warning(f"При рассылке уведомлении о скорой просрочке дз, аккаунт с id {id[0]} заблокировал бота")
+                    logger.warning(f"При вызове broadcast, аккаунт с id {id[0]} заблокировал бота")
                     continue
 
                 logger.critical(f"Ошибка при вызове broadcast: ", e)
