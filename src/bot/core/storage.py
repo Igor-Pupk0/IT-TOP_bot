@@ -1,5 +1,5 @@
 import os
-from src.db.Journal_database import Creds_db
+from src.db.Journal_database import Creds_db, Settings_db
 
 TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -16,5 +16,6 @@ ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC = 60 * 60
 
 
 db_obj = Creds_db()
+settings_db_obj = Settings_db()
 users_states = {} # Состояния пользователей
 user_auths = {} # Авторизированные пользователи

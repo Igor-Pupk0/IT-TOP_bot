@@ -70,3 +70,53 @@ class Creds_db:
         user_data = self.cursor.fetchone()
         self.connection.close()
         return user_data
+    
+class Settings_db:
+    def __init__(self):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+
+        self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_settings (
+        id INTEGER PRIMARY KEY,
+        telegram_id INTEGER,
+        get_almost_expired_hw_notifictions INTEGER NOT NULL DEFAULT 1,
+        get_admin_brodcasts INTEGER NOT NULL DEFAULT 1
+        )
+        """)
+        self.connection.commit()
+        self.connection.close()
+
+    def init_user_settings(self, telegram_id: int):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute('INSERT INTO user_settings (telegram_id) VALUES (?)', (telegram_id,))
+        self.connection.commit()
+        self.connection.close()
+
+    def update_user_settings(self, telegram_id: int, parametr: str, value: str):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute(f"UPDATE user_settings SET {parametr} = ? WHERE telegram_id = ?", (value, telegram_id))
+        self.connection.commit()
+        self.connection.close()
+
+    def get_all_settings_by_telegram_id(self, telegram_id: int):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.connection.row_factory = sqlite3.Row
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("SELECT * FROM user_settings WHERE telegram_id = ?", (telegram_id,))
+        user_data: sqlite3.Row = self.cursor.fetchone()
+        self.connection.close()
+
+        try:
+            return dict(user_data)
+        except:
+            return None
+
+    def delete_settings_by_telegram_id(self, telegram_id: int):
+        self.connection = sqlite3.connect(DB_PATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("DELETE FROM user_settings WHERE telegram_id = ?", (telegram_id,))
+        self.connection.commit()
+        self.connection.close()

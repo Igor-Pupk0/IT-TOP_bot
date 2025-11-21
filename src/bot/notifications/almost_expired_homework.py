@@ -5,7 +5,7 @@
 ###
 
 
-from ..core.storage import ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC, db_obj
+from ..core.storage import ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC, db_obj, settings_db_obj
 from ..core.states import get_user_status
 from ..modules.authorization import load_user
 from ..core.logs import logger
@@ -34,27 +34,29 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
         if actual_homeworks == 500:
             continue
 
+        resp = settings_db_obj.get_all_settings_by_telegram_id(user_id)
+
+        if resp.get("get_almost_expired_hw_notifictions") == 0:
+            continue
+
         for homework in actual_homeworks:
             deadline = homework.get("overdue_time")
             time_to_expire = datetime.datetime.fromisoformat(deadline) - datetime.datetime.today()
-            if time_to_expire.days == 0 or time_to_expire.days == None:
+            if time_to_expire.days in [0, 1] or time_to_expire.days == None:
                 hours = time_to_expire.seconds / 60 / 60
+                days = time_to_expire.days
                 try:
-                    if hours < 24 and hours > 23:
+                    if hours < 16.5 and hours > 17.5 and days == 0:
                         bot.send_message(user_id,
-                                            notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>24 часов</b>",
+                                            notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>17 часов</b>",
                                             parse_mode="HTML")
-                    elif hours < 12.5 and hours > 11.5:
+                    elif hours < 12.5 and hours > 11.5 and days == 1:
                         bot.send_message(user_id,
-                                            notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>12 часов</b>",
+                                            notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось <b>полтора дня</b>",
                                             parse_mode="HTML")
-                    elif hours < 6.5 and hours > 5.5:
+                    elif hours < 6.5 and hours > 5.5 and days == 0:
                             bot.send_message(user_id,
                                                 notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
-                                                parse_mode="HTML")
-                    elif hours < 1.5:
-                            bot.send_message(user_id, 
-                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>часа!</b>",
                                                 parse_mode="HTML")
                         
                 except Exception as e:

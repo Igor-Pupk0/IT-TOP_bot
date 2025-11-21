@@ -1,7 +1,7 @@
 import telebot
 from ..core.storage import DEV_TELEGRAM_ID
 from ..core.logs import logger
-from ...db.Journal_database import Creds_db
+from ..core.storage import db_obj, settings_db_obj
 from ..core.states import get_user_status
 from ..core.keyboards import make_return_button
 import time
@@ -50,14 +50,20 @@ def broadcasts():
     def send_broadcast(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) вызвал broadcast")
         get_user_status(message.from_user.id).broadcast_typing_status = False
-        db_obj = Creds_db()
 
         telegram_ids: tuple = db_obj.get_all_telegram_ids()
 
         for id in telegram_ids:
             try:
-                bot.send_message(id[0], broadcast_prefix + message.text)
-                time.sleep(1)
+                user_settings = settings_db_obj.get_all_settings_by_telegram_id(id[0])
+
+                if user_settings == None or type(user_settings) == int:
+                    continue
+
+                if user_settings.get("get_admin_brodcasts") == 1:
+                    message_text = broadcast_prefix
+                    bot.copy_message(id[0], message.chat.id, message.id)
+                    time.sleep(1)
             
             except Exception as e:
                 if "chat not found" in str(e):

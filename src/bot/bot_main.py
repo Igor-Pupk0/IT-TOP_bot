@@ -18,6 +18,7 @@ from .modules.some_funcs.feedbacks import setup_get_feedbacks_module
 from .notifications.notifications_main import init_notifications
 from .modules.some_funcs.market import setup_market_module
 from .modules.statistic import setup_stats_module
+from .modules.some_funcs.settings import setup_settings_module
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -38,5 +39,6 @@ setup_rate_lessons_module(bot)
 setup_get_feedbacks_module(bot)
 setup_market_module(bot)
 setup_stats_module(bot)
+setup_settings_module(bot)
 
 init_notifications(bot)
