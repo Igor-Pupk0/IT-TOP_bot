@@ -17,23 +17,34 @@ def setup_send_homework_module(bot: telebot.TeleBot):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет сдать ДЗ")
 
 
-
         user_homework_pages_data = homework_pages_data.get(call.from_user.id)
-        if user_homework_pages_data == None:
-            keyboard, hw_message = make_homework_message()
-        else:
+        if user_homework_pages_data != None:
             keyboard = telebot.types.InlineKeyboardMarkup()
             send_return_button = telebot.types.InlineKeyboardButton("🗑 Удалить меню", callback_data="return_and_delete_homework")
             keyboard.add(send_return_button)
             bot.send_message(call.message.chat.id, "Отрыть более 1 меню нельзя!", reply_markup=keyboard)
             return
 
+
+
+        else:
+            user_message_pages: dict = messages_pages.get(call.from_user.id)
+            if user_message_pages == None:
+                bot.delete_message(call.message.chat.id, call.message.id)
+                return
+            homework_page: Pages = user_message_pages.get(call.message.id)
+            page_metadata: dict = homework_page.get_page_metadata()
+
+            homework_data = {"homework_id": page_metadata["homework_id"], "lesson_name": page_metadata["lesson_name"]}
+
+            keyboard, hw_message = make_homework_message(homework_data)
+
         
 
-        sended_message = bot.send_message(call.message.chat.id,
-                                          hw_message,
-                                          parse_mode="HTML",
-                                          reply_markup=keyboard)
+        bot.send_message(call.message.chat.id,
+                            hw_message,
+                            parse_mode="HTML",
+                            reply_markup=keyboard)
         
         user_message_pages: dict = messages_pages.get(call.from_user.id)
         if user_message_pages == None:
@@ -230,7 +241,7 @@ def setup_send_homework_module(bot: telebot.TeleBot):
         user.sending_text_answer = False
         user.sending_homework_file = False
 
-        bot.delete_message(call.message.chat.id, call.message)
+        bot.delete_message(call.message.chat.id, call.message.id)
         
 
 def make_cancel_keyboard():
