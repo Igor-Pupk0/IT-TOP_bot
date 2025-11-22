@@ -35,3 +35,20 @@ class Pages():
         
         self.now_page -= 1
         return self.get_page()
+
+
+class Keyboard_pages(Pages):
+    def add_page(self, keyboard: telebot.types.InlineKeyboardMarkup, metadata = None):
+        self.page_list.append({"keyboard": keyboard, "metadata": metadata})
+        self.page_count += 1
+
+    def get_page(self):
+        if self.now_page == 1:
+            return self.page_list[0]["keyboard"]
+        return self.page_list[self.now_page - 1]["keyboard"]
+    
+    def get_page_metadata(self):
+        if self.now_page == 1:
+            return self.page_list[0]["metadata"]
+        return self.page_list[self.now_page - 1]["metadata"]
+    

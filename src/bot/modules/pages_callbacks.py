@@ -1,5 +1,5 @@
 import telebot
-from ..core.pages import Pages, messages_pages
+from ..core.pages import Pages, messages_pages, Keyboard_pages
 
 def setup_pages_cb_module(bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: call.data in ["turn_left", "turn_right"])
@@ -10,33 +10,63 @@ def setup_pages_cb_module(bot: telebot.TeleBot):
             bot.delete_message(call.message.chat.id, call.message.message_id)
             return
 
-        page_obj: Pages = tmp.get(call.message.message_id)
-        
-        if page_obj == None:
-            bot.delete_message(call.message.chat.id, call.message.message_id)
-            return
+        page_obj = tmp.get(call.message.message_id)
+        if type(page_obj) == Pages:
+            if page_obj == None:
+                bot.delete_message(call.message.chat.id, call.message.message_id)
+                return
+                    
+            if call.data == "turn_right":
+                right_page = page_obj.turn_right_page()
+
+                if right_page == call.message.text or right_page == False:
+                    return
+                bot.edit_message_text(right_page,
+                                    call.message.chat.id,
+                                    call.message.id,
+                                    reply_markup=call.message.reply_markup,
+                                    parse_mode="HTML",
+                                    disable_web_page_preview=True)
                 
-        if call.data == "turn_right":
-            right_page = page_obj.turn_right_page()
+            elif call.data == "turn_left":
+                left_page = page_obj.turn_left_page()
 
-            if right_page == call.message.text or right_page == False:
+                if left_page == call.message.text or left_page == False:
+                    return
+
+                bot.edit_message_text(left_page, 
+                                    call.message.chat.id, 
+                                    call.message.id, 
+                                    reply_markup=call.message.reply_markup, 
+                                    parse_mode="HTML",
+                                    disable_web_page_preview=True)
+                
+        elif type(page_obj) == Keyboard_pages:
+            if page_obj == None:
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 return
-            bot.edit_message_text(right_page,
-                                  call.message.chat.id,
-                                  call.message.id,
-                                  reply_markup=call.message.reply_markup,
-                                  parse_mode="HTML",
-                                  disable_web_page_preview=True)
-            
-        elif call.data == "turn_left":
-            left_page = page_obj.turn_left_page()
+                    
+            if call.data == "turn_right":
+                right_page = page_obj.turn_right_page()
 
-            if left_page == call.message.text or left_page == False:
-                return
+                if right_page == call.message.text or right_page == False:
+                    return
+                bot.edit_message_text(call.message.text,
+                                    call.message.chat.id,
+                                    call.message.id,
+                                    reply_markup=right_page,
+                                    parse_mode="HTML",
+                                    disable_web_page_preview=True)
+                
+            elif call.data == "turn_left":
+                left_page = page_obj.turn_left_page()
 
-            bot.edit_message_text(left_page, 
-                                  call.message.chat.id, 
-                                  call.message.id, 
-                                  reply_markup=call.message.reply_markup, 
-                                  parse_mode="HTML",
-                                  disable_web_page_preview=True)
+                if left_page == call.message.text or left_page == False:
+                    return
+
+                bot.edit_message_text(call.message.text, 
+                                    call.message.chat.id, 
+                                    call.message.id, 
+                                    reply_markup=left_page, 
+                                    parse_mode="HTML",
+                                    disable_web_page_preview=True)
