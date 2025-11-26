@@ -5,22 +5,21 @@
 
 import requests
 import jinja2
-import io
 
-STORAGE_SERVICE_URL = "https://envs.sh"
+# STORAGE_SERVICE_URL_2 = "https://envs.sh"
+STORAGE_SERVICE_URL_2 = "https://0x0.st"
+
+user_agent_headers = {"User-Agent": "IT-TOP_bot/1.0"}
 
 def upload_html_page(file_content: str):
 
     file_post_data = {"file": ("mne.html", file_content.encode("utf-8"), "text/html")}
-    post_data = {"secret": "",
+    post_data = {"secret": "zov",
                  "expires": 3}
-
-    response = requests.post(STORAGE_SERVICE_URL, files=file_post_data, data=post_data)
-
-    response.encoding = "utf-8"
-
+    
+    response = requests.post(STORAGE_SERVICE_URL_2, files=file_post_data, data=post_data, headers=user_agent_headers)
     print(response.text)
-    return response.text
+    return response.text[:-1]
 
 def generate_marks_page(marks_list: list) -> str:
 
