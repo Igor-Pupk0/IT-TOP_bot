@@ -15,7 +15,8 @@ def setup_some_module(bot: telebot.TeleBot):
         market_button = telebot.types.InlineKeyboardButton("💰 Маркет", callback_data="show_market")
         settings_button = telebot.types.InlineKeyboardButton("⚙️ Настройки", callback_data="show_settings_menu")
         leaderboads_button = telebot.types.InlineKeyboardButton("📈 Лидерборды", callback_data="show_leaderboards_menu")
-        profile_keyboard.add(logout_button, feedbacks_button, market_button, settings_button, leaderboads_button, make_return_button())
+        activity_button = telebot.types.InlineKeyboardButton("🪙 Активность", callback_data="show_activity")
+        profile_keyboard.add(logout_button, feedbacks_button, market_button, settings_button, leaderboads_button, activity_button, make_return_button())
 
         bot.send_message(message.chat.id,
                         f"Разные функции и кнопочки", 

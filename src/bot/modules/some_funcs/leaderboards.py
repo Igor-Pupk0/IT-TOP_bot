@@ -40,7 +40,7 @@ def setup_leaderboards_module(bot: telebot.TeleBot):
             amount = people["amount"]
             photo_path = people["photo_path"]
 
-            leaderboard_message += f"{number}) <i>{full_name}</i>        {amount}💰, <a href='{photo_path}'>ФОТО</a>\n"
+            leaderboard_message += f"{number}) {amount}💰 <i>{full_name}</i> <a href='{photo_path}'>ФОТО</a>\n"
 
         bot.send_message(call.message.chat.id,
                          leaderboard_message,
@@ -67,7 +67,7 @@ def setup_leaderboards_module(bot: telebot.TeleBot):
                 leaderboard_message += '---------------------------------------------------------------------\n'
                 continue
 
-            leaderboard_message += f"{number}) <i>{full_name}</i>        {amount}💰, <a href='{photo_path}'>ФОТО</a>\n"
+            leaderboard_message += f"{number}) {amount}💰 <i>{full_name}</i>, <a href='{photo_path}'>ФОТО</a>\n"
 
 
 
