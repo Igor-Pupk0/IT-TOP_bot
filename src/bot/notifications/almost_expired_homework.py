@@ -46,7 +46,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                 hours = time_to_expire.seconds / 60 / 60
                 days = time_to_expire.days
                 try:
-                    if hours < 16.5 and hours > 17.5 and days == 0:
+                    if hours < 16.5 and hours > 17.5 and days == 0 or days == None:
                         bot.send_message(user_id,
                                             notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>17 часов</b>",
                                             parse_mode="HTML")
@@ -54,7 +54,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                         bot.send_message(user_id,
                                             notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось <b>полтора дня</b>",
                                             parse_mode="HTML")
-                    elif hours < 6.5 and hours > 5.5 and days == 0:
+                    elif hours < 6.5 and hours > 5.5 and days == 0 or days == None:
                             bot.send_message(user_id,
                                                 notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
                                                 parse_mode="HTML")
