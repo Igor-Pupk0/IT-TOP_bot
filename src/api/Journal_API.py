@@ -116,7 +116,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
 
 
         json_responce_obj = json.loads(response.text)
@@ -140,7 +142,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         if json_responce_obj == None or json_responce_obj == []:
@@ -157,7 +161,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
 
         json_responce_obj = json.loads(response.text)
@@ -183,7 +189,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         
@@ -253,7 +261,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         
@@ -270,7 +280,9 @@ class API:
                 self.status_code_checker(response)
                 break
             except Exception as e:
-                self.exception_handler(e, response)
+                code = self.exception_handler(e, response)
+                if code != None:
+                    return code
                 
         json_responce_obj = json.loads(response.text)
         

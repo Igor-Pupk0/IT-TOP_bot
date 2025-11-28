@@ -4,6 +4,7 @@ from ..core.logs import logger
 from ..core.states import get_user_status, delete_user_status
 from ..core.keyboards import make_return_button
 from ..core.storage import db_obj
+from ..core.journal_500 import get_500_message
 
 
 def setup_stats_module(bot: telebot.TeleBot):
@@ -17,6 +18,9 @@ def setup_stats_module(bot: telebot.TeleBot):
 
         user = get_user_status(call.from_user.id)
         user_info = user.API.get_user_info()
+        if user_info == 500:
+          bot.send_message(call.from_user.id, get_500_message(call.message))
+          return
         user_leader_stats = user.API.get_leader_tables_stats()
 
         ### Дикое извлечение данных

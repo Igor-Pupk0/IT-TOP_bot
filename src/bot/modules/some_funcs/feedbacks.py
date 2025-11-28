@@ -14,6 +14,10 @@ def setup_get_feedbacks_module(bot: telebot.TeleBot):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) смотрит отзывы о себе")
 
         user_feedbacks: list = get_user_status(call.from_user.id).API.get_student_feedbacks()
+        if user_feedbacks == 500:
+            bot.send_message(call.message.chat.id, get_500_message(call))
+            return
+
         
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
         turn_left_button, turn_right_button = make_turn_pages_buttons()

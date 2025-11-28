@@ -21,7 +21,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         homework_count = get_user_status(call.from_user.id).API.get_homework_count()
 
         if homework_count == 500:
-            Bot.send_message(get_500_message(call.message))
+            Bot.send_message(call.message.chat.id, get_500_message(call.message))
             return
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
@@ -273,7 +273,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
         homework_count = get_user_status(message.from_user.id).API.get_homework_count()
 
         if homework_count == 500:
-            Bot.send_message(get_500_message(message))
+            Bot.send_message(message.chat.id, get_500_message(message))
             return
 
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)

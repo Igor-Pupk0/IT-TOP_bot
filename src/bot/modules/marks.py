@@ -4,6 +4,7 @@ from .authorization import check_auth
 from ..core.generate_html_marks import generate_marks_page
 from ..core.keyboards import make_return_button
 from ..core.logs import logger
+from ..core.journal_500 import get_500_message
 
 def setup_marks_module(bot: telebot.TeleBot):
     @bot.message_handler(func= lambda message: message.text == "5️⃣ Оценки")
@@ -11,7 +12,10 @@ def setup_marks_module(bot: telebot.TeleBot):
     def send_marks_menu(message: telebot.types.Message):
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) хочет посмотреть оценки")
         marks = get_user_status(message.from_user.id).API.get_marks()
-        if type(marks) != list:
+        if marks == 500:
+            bot.send_message(message.chat.id, get_500_message(message))
+            return
+        elif type(marks) != list:
             bot.send_message(message.chat.id, "Ошибка смерти")
             return
         

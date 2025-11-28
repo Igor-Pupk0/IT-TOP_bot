@@ -4,6 +4,7 @@ from ...core.logs import logger
 from ...core.states import get_user_status
 from ...core.keyboards import make_return_button
 from ...core.keyboards import make_return_keyboard
+from ...core.journal_500 import get_500_message
 
 def setup_leaderboards_module(bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: call.data == "show_leaderboards_menu")
@@ -31,6 +32,9 @@ def setup_leaderboards_module(bot: telebot.TeleBot):
     def handle_group_leaderboards(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) смотрит лидерборд группы")
         group_peoples = get_user_status(call.from_user.id).API.get_leaderboard_group()
+        if group_peoples == 500:
+            bot.send_message(call.message.chat.id, get_500_message(call.message))
+            return
 
         leaderboard_message = 'Лидерборд группы:\n\n'
 
@@ -54,6 +58,9 @@ def setup_leaderboards_module(bot: telebot.TeleBot):
     def handle_stream_leaderboards(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) смотрит лидерборд потока")
         group_peoples = get_user_status(call.from_user.id).API.get_leaderboard_stream()
+        if group_peoples == 500:
+            bot.send_message(call.message.chat.id, get_500_message(call.message))
+            return
 
         leaderboard_message = 'Лидерборд потока:\n\n'
 

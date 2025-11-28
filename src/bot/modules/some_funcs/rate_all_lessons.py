@@ -15,7 +15,7 @@ def setup_rate_lessons_module(bot: telebot.TeleBot):
         user_lessons = user.API.get_lessons_for_feedback()
 
         if user_lessons == 500:
-            get_500_message(call.message)
+            bot.send_message(call.message.chat.id, get_500_message(call.message))
             return
 
         if user_lessons == None or user_lessons == []:

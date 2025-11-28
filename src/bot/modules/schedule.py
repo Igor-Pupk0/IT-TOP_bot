@@ -22,7 +22,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
             Bot.send_message(call.message.chat.id, f"{iso_date}: пар нет")
             return
         elif today_schedule == 500:
-            Bot.send_message(get_500_message(call.message))
+            Bot.send_message(call.from_user.id, get_500_message(call.message))
             return
 
         msg_to_send = f'Расписание на <b>{iso_date}</b>:\n\n'

@@ -4,6 +4,7 @@ from ...core.logs import logger
 from ...core.states import get_user_status
 from ...core.keyboards import make_return_button, make_turn_pages_buttons
 from ...core.pages import Pages, messages_pages
+from ...core.journal_500 import get_500_message
 
 def setup_activity_module(bot: telebot.TeleBot):
     @bot.callback_query_handler(func= lambda call: call.data == "show_activity")
@@ -13,6 +14,10 @@ def setup_activity_module(bot: telebot.TeleBot):
 
         user = get_user_status(call.from_user.id)
         user_activites = user.API.get_activity()
+        if user_activites == 500:
+            bot.send_message(call.message.chat.id, get_500_message(call))
+            return
+
         page_obj = Pages()
         message = ''
         for num, activity in enumerate(user_activites):

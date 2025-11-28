@@ -14,6 +14,9 @@ def setup_market_module(bot: telebot.TeleBot):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) смотрит маркет")
 
         market_products: list = get_user_status(call.from_user.id).API.get_market_products()
+        if market_products == 500:
+            bot.send_message(call.message.chat.id, get_500_message(call.message))
+            return
         
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
         turn_left_button, turn_right_button = make_turn_pages_buttons()
