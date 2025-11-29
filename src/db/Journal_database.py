@@ -35,7 +35,7 @@ class Creds_db:
 
     def update_user_JWT_token(self, username: str, JWT_token: str):
         with Session(self.engine) as session:
-            session.execute(sqlalchemy.text("UPDATE Users SET JWT_token = :JWT_token WHERE username = :username"), {"username": username, "JWT_token": "None"})
+            session.execute(sqlalchemy.text("UPDATE Users SET JWT_token = :JWT_token WHERE username = :username"), {"username": username, "JWT_token": JWT_token})
             session.commit()
 
     def get_all_by_telegram_id(self, telegram_id: int):
