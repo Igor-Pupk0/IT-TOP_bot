@@ -3,7 +3,7 @@
 ### Тут находиться класс для взаимодействия с API
 ###
 
-from src.db.Journal_database import Creds_db
+from src.bot.core.storage import db_obj
 from src.bot.core.logs import logger
 from src.bot.core.states import delete_user_status
 import requests
@@ -31,7 +31,6 @@ class API:
             if str(ex) == "Unauthorized" or str(ex) == "Invalid creds":
                 res = self.update_JWT_headers()
                 if res == "Account has wrong creds":
-                    db_obj = Creds_db()
                     telegram_id = db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
                         return "Account has wrong creds"
@@ -102,7 +101,6 @@ class API:
             return "Account has wrong creds"
         
         self.headers_with_JWT["Authorization"] = "Bearer " + self.JWT_TOKEN
-        db_obj = Creds_db()
         db_obj.update_user_JWT_token(self.USER, self.JWT_TOKEN)
 
 
@@ -450,6 +448,5 @@ class API:
 
 def logout(telegram_id):
     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
-    db_obj = Creds_db()
     db_obj.delete_user_by_telegram_id(telegram_id)
     delete_user_status(telegram_id)
