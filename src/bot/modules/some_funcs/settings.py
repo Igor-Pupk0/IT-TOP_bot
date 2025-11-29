@@ -55,7 +55,6 @@ def setup_settings_module(bot: telebot.TeleBot):
             bot.answer_callback_query(call.id, "Ошибка, вызовите меню еще раз", show_alert=True)
             return
         bot.edit_message_reply_markup(message.chat.id, message.id, reply_markup=get_keyboard_markup(call.from_user.id))
-        bot.edit_message
         
         
     
@@ -64,10 +63,10 @@ def switch_settings(telegram_id, parametr):
     responce = settings_db_obj.get_all_settings_by_telegram_id(telegram_id)
     print(responce)
 
-    if responce.get(parametr) == 1:
-        new_value = 0
+    if responce.get(parametr) == True:
+        new_value = False
     else:
-        new_value = 1
+        new_value = True
 
     settings_db_obj.update_user_settings(telegram_id, parametr, new_value)
 
@@ -75,7 +74,7 @@ def get_keyboard_markup(telegram_id):
         responce = settings_db_obj.get_all_settings_by_telegram_id(telegram_id)
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=2)
 
-        if responce.get('get_almost_expired_hw_notifictions') == 1:
+        if responce.get('get_almost_expired_hw_notifictions') == True:
             parametr_almost_expired_hw_notifictions = "✅"
         else:
             parametr_almost_expired_hw_notifictions = "❌"
@@ -83,7 +82,7 @@ def get_keyboard_markup(telegram_id):
         switch_get_almost_expired_hw_notifications = telebot.types.InlineKeyboardButton(f"{parametr_almost_expired_hw_notifictions} Уведомления о просрочке дз", 
                                                                                         callback_data="settings_switch_get_alm_exp_hw")
 
-        if responce.get('get_admin_brodcasts') == 1:
+        if responce.get('get_admin_brodcasts') == True:
             parametr_get_admin_brodcasts = "✅"
         else:
             parametr_get_admin_brodcasts = "❌"

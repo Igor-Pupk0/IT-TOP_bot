@@ -4,3 +4,5 @@ watchdog
 psutil
 flask
 jinja2
+sqlalchemy
+psycopg2-binary
