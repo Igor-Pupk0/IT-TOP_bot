@@ -1,18 +1,18 @@
 ###
 ### Он проверяет и отправляет сообщение, если до того
-### как домашка просрочилась осталось: 24 часа, 12 часов
-### 6, 1 час
+### как домашка просрочилась осталось: полтора дня, 12
+### 6 часов
 ###
 
 
-from ..core.storage import ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC, db_obj, settings_db_obj
+from ..core.storage import db_obj, settings_db_obj
 from ..core.states import get_user_status
 from ..modules.authorization import load_user
 from ..core.logs import logger
-import threading
 import telebot
-import time
 import datetime
+import apscheduler.triggers.cron
+from ..core.storage import notification_scheduler
 
 notification_prefix = """❗️Уведомление❗️
 
@@ -42,19 +42,19 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
         for homework in actual_homeworks:
             deadline = homework.get("overdue_time")
             time_to_expire = datetime.datetime.fromisoformat(deadline) - datetime.datetime.today()
-            if time_to_expire.days in [0, 1] or time_to_expire.days == None:
+            if time_to_expire.days in [0, 1]:
                 hours = time_to_expire.seconds / 60 / 60
                 days = time_to_expire.days
                 try:
-                    if hours < 16.5 and hours > 17.5 and (days == 0 or days == None):
+                    if 16.5 < hours < 17.5 and days == 0:
                         bot.send_message(user_id,
                                             notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>17 часов</b>",
                                             parse_mode="HTML")
-                    elif hours < 12.5 and hours > 11.5 and days == 1:
+                    elif 11.5 < hours < 12.5 and days == 1:
                         bot.send_message(user_id,
                                             notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось <b>полтора дня</b>",
                                             parse_mode="HTML")
-                    elif hours < 6.5 and hours > 5.5 and (days == 0 or days == None):
+                    elif 5.5 < hours < 6.5 and days == 0:
                             bot.send_message(user_id,
                                                 notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
                                                 parse_mode="HTML")
@@ -74,17 +74,22 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                     continue
 
 
-def check_homework_cycle(bot: telebot.TeleBot):
-    while True:
-        time.sleep(ALMOST_EXPIRED_HOMEWORK_NOTIFICATION_TIMEOUT_SEC)
-        logger.info("Начинаю рассылку уведомлении о скорой просрочке дз")
-        users_ids = db_obj.get_all_telegram_ids()
 
-        for user_id in users_ids:
-            check_homework(bot, user_id[0])
-            time.sleep(1)
-        logger.info("Рассылка уведомлении о скорой просрочке дз завершена")
+def check_homework_start(bot: telebot.TeleBot):
+    logger.info("Начинаю рассылку уведомлении о скорой просрочке дз")
+    users_ids = db_obj.get_all_telegram_ids()
+
+    for user_id in users_ids:
+        check_homework(bot, user_id[0])
+    logger.info("Рассылка уведомлении о скорой просрочке дз завершена")
         
 
+
 def init_almost_expired_homework_notification(bot):
-    threading.Thread(target=check_homework_cycle, args=[bot], daemon=True).start()
+    
+    notification_scheduler.add_job(
+        check_homework_start,
+        trigger=apscheduler.triggers.cron.CronTrigger(hour='7,12,18', minute=0),
+        id='almost_exp_notification',
+        args=[bot]
+    )

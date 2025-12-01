@@ -1,4 +1,5 @@
 import os
+import apscheduler.schedulers.background
 from src.db.Journal_database import Creds_db, Settings_db
 
 TOKEN = os.getenv("BOT_TOKEN")
@@ -19,3 +20,4 @@ db_obj = Creds_db()
 settings_db_obj = Settings_db()
 users_states = {} # Состояния пользователей
 user_auths = {} # Авторизированные пользователи
+notification_scheduler = apscheduler.schedulers.background.BackgroundScheduler(timezone="Asia/Krasnoyarsk")
