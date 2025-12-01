@@ -1,11 +1,11 @@
 services:
   bot:
-    build: .              # Собираем образ из Dockerfile в текущей папке
+    build: . 
     container_name: it-top_bot
-    image: it-top_bot:latest   # Имя образа
+    image: it-top_bot:latest
     restart: on-failure
     volumes:
-      - it-top_bot_files:/app/files   # монтируем папку для SQLite
+      - files:/app/files
     environment:
       - BOT_ENV=${BOT_ENV}
       - BOT_TOKEN=${BOT_TOKEN}
@@ -59,7 +59,7 @@ services:
 
 volumes:
   certs:
-  it-top_bot_files:
+  files:
   postgres_data:
 
 networks:
