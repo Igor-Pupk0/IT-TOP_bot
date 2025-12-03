@@ -18,7 +18,7 @@ server {
     ssl_certificate     /etc/letsencrypt/live/${WEBHOOK_DOMAIN}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${WEBHOOK_DOMAIN}/privkey.pem;
 
-    location /${WEBHOOK_DOMAIN} {
+    location /${WEBHOOK_ENDPOINT} {
         proxy_pass http://${WEBHOOK_ENDPOINT}:5000/${WEBHOOK_ENDPOINT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
