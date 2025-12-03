@@ -13,5 +13,5 @@ def setup_webhooks_module(bot: telebot.TeleBot):
         return "OK", 200
     
     bot.remove_webhook()
-    bot.set_webhook(url=f"https://{WEBHOOK_DOMAIN}/"+WEBHOOK_ENDPOINT, )
+    bot.set_webhook(url=f"https://{WEBHOOK_DOMAIN}/{WEBHOOK_ENDPOINT}", )
     app.run(host="0.0.0.0", port=5000)
