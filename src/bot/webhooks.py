@@ -1,6 +1,6 @@
 import telebot
 from flask import Flask, request
-from .core.storage import WEBHOOK_URL, WEBHOOK_ENDPOINT
+from .core.storage import WEBHOOK_DOMAIN, WEBHOOK_ENDPOINT
 
 
 app = Flask(__name__)
@@ -13,5 +13,5 @@ def setup_webhooks_module(bot: telebot.TeleBot):
         return "OK", 200
     
     bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL+WEBHOOK_ENDPOINT, )
+    bot.set_webhook(url=f"https://{WEBHOOK_DOMAIN}/"+WEBHOOK_ENDPOINT, )
     app.run(host="0.0.0.0", port=5000)
