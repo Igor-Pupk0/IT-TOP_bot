@@ -8,6 +8,7 @@ from src.api.Journal_API import API
 from ..core.storage import db_obj, user_auths, settings_db_obj
 from ..core.states import get_user_status, delete_user_status
 from ..core.logs import logger
+from ..core.pages import messages_pages
 
 def setup_auth_module(Bot: telebot.TeleBot):
     global bot
@@ -70,6 +71,11 @@ def setup_auth_module(Bot: telebot.TeleBot):
 def check_auth(func):
     @wraps(func)
     def auth_check(message_or_call):
+        tmp = messages_pages.get(message_or_call.from_user.id)
+
+        if tmp == None:
+            messages_pages[message_or_call.from_user.id] = {}
+
         user_data = db_obj.get_all_by_telegram_id(message_or_call.from_user.id)
 
 

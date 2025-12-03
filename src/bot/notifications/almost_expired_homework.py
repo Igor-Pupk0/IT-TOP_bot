@@ -31,10 +31,13 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
     for page in range(1, pages_count):
         actual_homeworks = user_states.API.get_homework(3, page)
 
-        if actual_homeworks == 500:
+        if actual_homeworks == 500 or actual_homeworks == False:
             continue
 
         resp = settings_db_obj.get_all_settings_by_telegram_id(user_id)
+
+        if resp == None:
+            settings_db_obj.init_user_settings(user_id)
 
         if resp.get("get_almost_expired_hw_notifictions") == 0:
             continue
