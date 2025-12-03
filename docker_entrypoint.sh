@@ -1,18 +1,21 @@
-#!/bin/bash
-export $(cat .env | xargs)
+#!/bin/sh
 
 TEMPLATE="./files/nginx.conf.example"
 OUTPUT="./files/nginx.conf"
 
-rm -f "$OUTPUT"
+export $(cat .env | xargs)
+
 
 cp "$TEMPLATE" "$OUTPUT"
 
+safe_replace() {
+    local var_name="$1"
+    local value="$2"
+    value_escaped=$(printf '%s' "$value" | sed 's/[&/\]/\\&/g')
+    sed -i "s@\${$var_name}@${value_escaped}@g" "$OUTPUT"
+}
 
-for var in $(compgen -e); do
-    value=$(printenv "$var")
+# Выполняем замены
+safe_replace "WEBHOOK_DOMAIN" "$WEBHOOK_DOMAIN"
+safe_replace "WEBHOOK_ENDPOINT" "$WEBHOOK_ENDPOINT"
 
-    safe_value=$(printf '%s\n' "$value" | sed 's/[[\.*^$/]/\\&/g')
-
-    sed -i "s|\${$var}|$safe_value|g" "$OUTPUT"
-done
