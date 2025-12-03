@@ -1,0 +1,13 @@
+.git
+.gitignore
+
+__pycache__
+*.pyc 
+
+.vscode
+
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+nginx.conf
