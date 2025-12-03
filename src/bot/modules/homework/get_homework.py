@@ -260,7 +260,7 @@ def setup_get_homework_module(Bot: telebot.TeleBot):
             reply_markup=keyboard, 
             disable_web_page_preview=True)
         
-        messages_pages[call.from_user.id] = {sended_message.message_id: pages_obj}
+        messages_pages[call.from_user.id].update({sended_message.message_id: pages_obj})
         logger.info(f"Пользователю ({call.from_user.username}:{call.from_user.id}) отправлено ДЗ под номером {call.data[0:1]}")
 
 

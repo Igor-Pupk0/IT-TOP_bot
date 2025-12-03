@@ -11,6 +11,6 @@ def make_return_button() -> telebot.types.InlineKeyboardMarkup :
     return return_button
 
 def make_turn_pages_buttons():
-    turn_left_button = telebot.types.InlineKeyboardButton("⬅️ Влево",callback_data="turn_left")
-    turn_right_button = telebot.types.InlineKeyboardButton("Направо ➡️", callback_data="turn_right")
+    turn_left_button = telebot.types.InlineKeyboardButton("⬅️",callback_data="turn_left")
+    turn_right_button = telebot.types.InlineKeyboardButton("➡️", callback_data="turn_right")
     return turn_left_button, turn_right_button

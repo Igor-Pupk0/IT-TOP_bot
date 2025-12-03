@@ -48,4 +48,4 @@ def setup_get_feedbacks_module(bot: telebot.TeleBot):
             reply_markup=keyboard, 
             disable_web_page_preview=True)
         
-        messages_pages[call.from_user.id] = {sended_message.message_id: pages_obj}
+        messages_pages[call.from_user.id].update({sended_message.message_id: pages_obj})

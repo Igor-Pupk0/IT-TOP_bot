@@ -62,7 +62,7 @@ def setup_activity_module(bot: telebot.TeleBot):
             reply_markup=keyboard, 
             disable_web_page_preview=True)
         
-        messages_pages[call.from_user.id] = {sended_message.message_id: page_obj}
+        messages_pages[call.from_user.id].update({sended_message.message_id: page_obj})
         
 
 def match_user_activity_achievements_name(ach_name: str):

@@ -101,7 +101,7 @@ def setup_schedule_module(Bot: telebot.TeleBot):
             keyboard.add(button_turn_left, button_turn_right, make_return_button())
 
         sended_message = Bot.send_message(message.chat.id, "Выберите дату:", reply_markup=keyboard_pages_obj.turn_right_page())
-        messages_pages[message.from_user.id] = {sended_message.message_id: keyboard_pages_obj}
+        messages_pages[message.from_user.id].update({sended_message.message_id: keyboard_pages_obj})
 
 def match_weekday_num(weekday_num: int) -> str:
     match weekday_num:
