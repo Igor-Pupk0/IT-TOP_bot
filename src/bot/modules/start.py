@@ -28,5 +28,5 @@ def generate_start_message() -> str:
         telebot.types.KeyboardButton("5️⃣ Оценки"),
         telebot.types.KeyboardButton("🐥 Разное")
     )
-    text = f"Это Айте топ бот, тут можно смотреть расписание и дз\nБот еще в разработке, связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>"
+    text = f"Это бот-журнал или журнл в обертке тг бота\nБот еще в разработке, связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>"
     return (text, keyboard)

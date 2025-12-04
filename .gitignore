@@ -1,5 +1,5 @@
 *.pyc
-config.json
 TODO
 logs.txt
 .env
+nginx.conf

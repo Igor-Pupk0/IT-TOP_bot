@@ -1,6 +1,6 @@
 ###
 ### MAIN FILE FOR INTERACTING WITH JOURNAL API
-### Тут находиться класс для взаимодействия с API
+### Тут находится класс для взаимодействия с API
 ###
 
 from src.bot.core.storage import db_obj

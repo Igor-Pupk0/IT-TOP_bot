@@ -1,7 +1,7 @@
 ###
 ### Он проверяет и отправляет сообщение, если до того
-### как домашка просрочилась осталось: полтора дня, 12
-### 6 часов
+### как домашка просрочилась осталось: полтора дня, 17 часов (в 7 утра)
+### и 6 часов (18 вечера)
 ###
 
 
@@ -14,9 +14,7 @@ import datetime
 import apscheduler.triggers.cron
 from ..core.storage import notification_scheduler
 
-notification_prefix = """❗️Уведомление❗️
-
-"""
+notification_prefix = """❗️Уведомление❗️\n\n"""
 
 @load_user
 def check_homework(bot: telebot.TeleBot, user_id: int):
@@ -59,7 +57,7 @@ def check_homework(bot: telebot.TeleBot, user_id: int):
                                             parse_mode="HTML")
                     elif 5.5 < hours < 6.5 and days == 0:
                             bot.send_message(user_id,
-                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, бедыч!",
+                                                notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>6 часов</b>, торопись!",
                                                 parse_mode="HTML")
                         
                 except Exception as e:

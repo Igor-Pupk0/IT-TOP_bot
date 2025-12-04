@@ -9,6 +9,5 @@ RUN ["pip", "install", "-r", "requirements.txt"]
 
 
 COPY . /app
-RUN ["sh", "./docker_entrypoint.sh"]
 
-CMD ["python", "./main.py"]
+ENTRYPOINT ["sh", "./docker_entrypoint.sh"]

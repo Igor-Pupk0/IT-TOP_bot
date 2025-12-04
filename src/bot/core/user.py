@@ -14,13 +14,6 @@ class User:
         # 4) "Auth" - авторизован
         self.auth_status = "No_auth"
 
-        # main
-        # main/profile
-        # main/homeworks
-        # main/homeworks/some_hw
-        # main/schedule
-        self.active_menu = "main"
-
         self.broadcast_typing_status = False
 
         ### Параметры для сдачи ДЗ

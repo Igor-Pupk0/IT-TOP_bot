@@ -40,10 +40,10 @@ def setup_profile_module(bot: telebot.TeleBot):
         bot.send_message(message.chat.id,
 f"""\
 Твой профиль:
-Ку, <b>{name}</b>
+Привет, <b>{name}</b>
 Твоя группа: {group_name}
 
-Голда на балике:
+Баланс:
     - <b>{topcoins}</b> Топкоинов 💸
     - <b>{topgems}</b> Топгемов  💎
 

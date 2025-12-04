@@ -5,7 +5,6 @@ OUTPUT="./files/nginx.conf"
 
 export $(cat .env | xargs)
 
-
 cp "$TEMPLATE" "$OUTPUT"
 
 safe_replace() {
@@ -19,3 +18,4 @@ safe_replace() {
 safe_replace "WEBHOOK_DOMAIN" "$WEBHOOK_DOMAIN"
 safe_replace "WEBHOOK_ENDPOINT" "$WEBHOOK_ENDPOINT"
 
+python ./main.py

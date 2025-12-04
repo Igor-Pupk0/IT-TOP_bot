@@ -8,9 +8,7 @@ import time
 
 checked_admins = []
 
-broadcast_prefix = """⚠️Скибиди админ пишет:
-
-"""
+broadcast_prefix = """⚠️Уведомление от админа:\n\n"""
 
 def setup_admin_module(Bot: telebot.TeleBot):
     global bot
@@ -25,7 +23,7 @@ def setup_admin_module(Bot: telebot.TeleBot):
 
         keyboard.add(broadcast_button, make_return_button())
 
-        bot.send_message(message.chat.id, "Чтооо админка???", reply_markup=keyboard)
+        bot.send_message(message.chat.id, "Админ панель", reply_markup=keyboard)
 
     broadcasts()
 
@@ -93,7 +91,7 @@ def check_on_dev(func):
             logger.warning(f"Администратор не указан")
 
         if int(DEV_TELEGRAM_ID) != message.from_user.id:
-            bot.send_message(message.chat.id, "Ты не админ, я тебя найду гандон чорт бля хули ты в админку ломишься пидарасина бля")
+            bot.send_message(message.chat.id, "Ты не админ")
             return
         
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) прошел проверку на админа")

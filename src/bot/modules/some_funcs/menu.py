@@ -19,7 +19,7 @@ def setup_some_module(bot: telebot.TeleBot):
         profile_keyboard.add(logout_button, feedbacks_button, market_button, settings_button, leaderboads_button, activity_button, make_return_button())
 
         bot.send_message(message.chat.id,
-                        f"Разные функции и кнопочки", 
+                        f"Разные функции", 
                         reply_markup=profile_keyboard,
                         parse_mode="HTML")
 

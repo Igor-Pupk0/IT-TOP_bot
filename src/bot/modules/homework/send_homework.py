@@ -60,7 +60,7 @@ def setup_send_homework_module(bot: telebot.TeleBot):
     @check_auth
     def call_write_time(call: telebot.types.CallbackQuery):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вводит время для ДЗ")
-        bot.send_message(call.message.chat.id, "Отправьте время в формате ЧЧ:ММ (час, минута. Пояснение для Стаса)",
+        bot.send_message(call.message.chat.id, "Отправьте время в формате ЧЧ:ММ (час, минута)",
                          reply_markup=make_cancel_keyboard())
         get_user_status(call.from_user.id).writing_time = True
 

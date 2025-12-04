@@ -2,7 +2,6 @@ import telebot
 from ..authorization import check_auth
 from ...core.logs import logger
 from ...core.states import get_user_status
-from ...core.keyboards import make_return_button
 from ...core.journal_500 import get_500_message
 
 def setup_rate_lessons_module(bot: telebot.TeleBot):

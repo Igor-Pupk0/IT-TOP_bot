@@ -16,7 +16,7 @@ def setup_marks_module(bot: telebot.TeleBot):
             bot.send_message(message.chat.id, get_500_message(message))
             return
         elif type(marks) != list:
-            bot.send_message(message.chat.id, "Ошибка смерти")
+            bot.send_message(message.chat.id, "Ошибка")
             return
         
         marks_page_url = generate_marks_page(marks)
@@ -25,4 +25,3 @@ def setup_marks_module(bot: telebot.TeleBot):
         see_marks_button = telebot.types.InlineKeyboardButton("Посмотреть", web_app=telebot.types.WebAppInfo(marks_page_url))
         keyboard.add(see_marks_button, make_return_button())
         bot.send_message(message.chat.id, "Оценки готовы к просмотру, нажмите на кнопку для их просмотра в привычном виде", reply_markup=keyboard)
-        # bot.send_message(message.chat.id, "Оценки изза технических причин пока не работают, терпите")

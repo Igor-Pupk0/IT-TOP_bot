@@ -14,7 +14,7 @@ def setup_settings_module(bot: telebot.TeleBot):
         logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) смотрит настройки")
 
         user_settings: tuple = settings_db_obj.get_all_settings_by_telegram_id(call.from_user.id)
-        message = "Прост настройки"
+        message = "Настройки бота"
 
         if user_settings == None:
             settings_db_obj.init_user_settings(call.from_user.id)

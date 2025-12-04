@@ -30,20 +30,6 @@ def generate_marks_page(marks_list: list) -> str:
         marks_list=marks_list
     )
 
-    # lesson_data = marks_list.get("date_visit")
-    # lesson_number = marks_list.get("lesson_number")
-    # student_was_on_lesson = marks_list.get("status_was")
-    # teacher_name = marks_list.get("teacher_name")
-    # lesson_name = marks_list.get("spec_name")
-    # lesson_theme = marks_list.get("lesson_theme")
-
-    # # Оценки
-    # control_work_mark = marks_list.get("control_work_mark")
-    # home_work_mark = marks_list.get("home_work_mark")
-    # lab_work_mark = marks_list.get("lab_work_mark")
-    # class_work_mark = marks_list.get("class_work_mark")
-    # practical_work_mark = marks_list.get("practical_work_mark")
-
     return upload_html_page(marks_html_content)
 
 
