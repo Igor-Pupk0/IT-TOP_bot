@@ -18,7 +18,6 @@ def upload_html_page(file_content: str):
                  "expires": 3}
     
     response = requests.post(STORAGE_SERVICE_URL_2, files=file_post_data, data=post_data, headers=user_agent_headers)
-    print(response.text)
     return response.text[:-1]
 
 def generate_marks_page(marks_list: list) -> str:

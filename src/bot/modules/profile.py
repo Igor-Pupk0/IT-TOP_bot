@@ -22,7 +22,6 @@ def setup_profile_module(bot: telebot.TeleBot):
         user = get_user_status(message.from_user.id)
         
         user_info = user.API.get_user_info()
-        print(user_info)
         if user_info == 500:
             bot.send_message(message.from_user.id, get_500_message(message))
             return

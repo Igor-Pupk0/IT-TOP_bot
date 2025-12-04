@@ -61,8 +61,7 @@ def setup_settings_module(bot: telebot.TeleBot):
 
 def switch_settings(telegram_id, parametr):
     responce = settings_db_obj.get_all_settings_by_telegram_id(telegram_id)
-    print(responce)
-
+    
     if responce.get(parametr) == True:
         new_value = False
     else:

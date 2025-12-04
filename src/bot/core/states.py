@@ -6,7 +6,6 @@ def get_user_status(telegram_id):
     if user_states is not None:
         if user_states.API == None and user_auths.get(telegram_id) != None:
             user_list = user_auths.get(telegram_id)
-            print(user_states.auth_status)
             user_obj = user_list.get('User_obj')
             if user_obj != None:
                 user_states.API = user_obj
