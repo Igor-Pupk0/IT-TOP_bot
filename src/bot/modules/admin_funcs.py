@@ -8,8 +8,6 @@ import time
 
 checked_admins = []
 
-broadcast_prefix = """⚠️Уведомление от админа:\n\n"""
-
 def setup_admin_module(Bot: telebot.TeleBot):
     global bot
     bot = Bot
@@ -59,7 +57,6 @@ def broadcasts():
                     continue
 
                 if user_settings.get("get_admin_brodcasts") == 1:
-                    message_text = broadcast_prefix
                     bot.copy_message(id[0], message.chat.id, message.id)
                     time.sleep(1)
             

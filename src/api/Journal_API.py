@@ -13,7 +13,7 @@ API_HOST = "msapi.top-academy.ru"
 
 class API:
 
-    def status_code_checker(self, response: requests.Response):
+    def __status_code_checker(self, response: requests.Response):
             if response.status_code != 200:
                 if response.status_code == 401:
                     raise Exception("Unauthorized")
@@ -26,7 +26,7 @@ class API:
 
                 raise Exception("Non 200 HTTP code on auth:", response.status_code, response.text)
 
-    def exception_handler(self, ex, response):
+    def __exception_handler(self, ex, response):
             print("Error in some func:", ex)
             if str(ex) == "Unauthorized" or str(ex) == "Invalid creds":
                 res = self.update_JWT_headers()
@@ -111,10 +111,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
 
@@ -137,10 +137,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -156,10 +156,10 @@ class API:
         for _ in range(1, 4):
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -184,10 +184,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -217,10 +217,10 @@ class API:
             try:
                 response = requests.post(url, headers=self.headers_with_JWT, data=post_data, files=post_file)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -237,10 +237,10 @@ class API:
             try:
                 response = requests.post(url, headers=self.headers_with_JWT, data=post_data)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -256,10 +256,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -275,10 +275,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -302,10 +302,10 @@ class API:
             try:
                 response = requests.post(url, headers=self.headers_with_JWT, data=post_data)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -320,10 +320,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -338,10 +338,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -357,10 +357,10 @@ class API:
             try:
                 response_group = requests.get(url_group, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response_group)
+                self.__status_code_checker(response_group)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response_group)
+                code = self.__exception_handler(e, response_group)
                 if code != None:
                     return code
                 
@@ -368,10 +368,10 @@ class API:
             try:
                 response_stream = requests.get(url_stream, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response_stream)
+                self.__status_code_checker(response_stream)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response_stream)
+                code = self.__exception_handler(e, response_stream)
                 if code != None:
                     return code
                 
@@ -398,10 +398,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -416,10 +416,10 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
@@ -434,16 +434,35 @@ class API:
             try:
                 response = requests.get(url, headers=self.headers_with_JWT)
 
-                self.status_code_checker(response)
+                self.__status_code_checker(response)
                 break
             except Exception as e:
-                code = self.exception_handler(e, response)
+                code = self.__exception_handler(e, response)
                 if code != None:
                     return code
                 
         json_responce_obj = json.loads(response.text)
         
-        return json_responce_obj  
+        return json_responce_obj
+
+    def get_future_exams(self):
+        url = f"https://{API_HOST}/api/v2/dashboard/info/future-exams"
+        
+        for _ in range(1, 4):
+            try:
+                response = requests.get(url, headers=self.headers_with_JWT)
+
+                self.__status_code_checker(response)
+                break
+            except Exception as e:
+                code = self.__exception_handler(e, response)
+                if code != None:
+                    return code
+                
+        json_responce_obj = json.loads(response.text)
+        
+        return json_responce_obj
+    
 
 
 def logout(telegram_id):

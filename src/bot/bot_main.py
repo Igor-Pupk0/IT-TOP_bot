@@ -21,6 +21,7 @@ from .modules.statistic import setup_stats_module
 from .modules.some_funcs.settings import setup_settings_module
 from .modules.some_funcs.leaderboards import setup_leaderboards_module
 from .modules.some_funcs.activity import setup_activity_module
+from .modules.some_funcs.exams import setup_exams_module
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -43,5 +44,6 @@ setup_stats_module(bot)
 setup_settings_module(bot)
 setup_leaderboards_module(bot)
 setup_activity_module(bot)
+setup_exams_module(bot)
 
 init_notifications(bot)
