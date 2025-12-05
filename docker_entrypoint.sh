@@ -1,7 +1,7 @@
 #!/bin/sh
 
 TEMPLATE="./files/nginx.conf.example"
-OUTPUT="./files/nginx.conf"
+OUTPUT="./etc/nginx/conf.d/default.conf"
 
 export $(cat .env | xargs)
 
