@@ -3,6 +3,8 @@
 TEMPLATE="./files/nginx.conf.example"
 OUTPUT="./etc/nginx/conf.d/default.conf"
 
+mkdir -p /etc/nginx/conf.d
+
 export $(cat .env | xargs)
 
 cp "$TEMPLATE" "$OUTPUT"
