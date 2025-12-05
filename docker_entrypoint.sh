@@ -1,7 +1,7 @@
 #!/bin/sh
 
 TEMPLATE="./files/nginx.conf.example"
-OUTPUT="/etc/nginx/conf.d/default.conf"
+OUTPUT="./files/default.conf"
 
 mkdir -p /etc/nginx/conf.d
 

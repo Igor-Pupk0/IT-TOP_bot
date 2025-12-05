@@ -27,6 +27,7 @@ services:
       - "443:443"
     volumes:
       - certs:/etc/letsencrypt
+      - files:/etc/nginx/conf.d
     depends_on:
       - bot
     networks:
@@ -38,7 +39,6 @@ services:
     profiles: ["prod"]
     volumes:
       - certs:/etc/letsencrypt
-      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
     entrypoint: >
       sh -c "while :; do sleep 6h & wait $$!; 
               certbot renew --webroot -w /var/www/certbot; 
