@@ -22,8 +22,7 @@ class Pages():
         return self.page_list[self.now_page - 1]["metadata"]
     
     def turn_right_page(self):
-
-
+        
         if 'debug_page' == self.get_next_page():
             debug_page_index = self.now_page
             self.now_page += 1
@@ -32,10 +31,11 @@ class Pages():
             dp_func_args = debug_page['metadata']['invoke_function_args']
             dp_func(*dp_func_args)
             self.delete_page(debug_page_index)
-            
-        
-        elif self.now_page > self.page_count:
+            return self.get_page()
+
+        if self.now_page + 1 > self.page_count:
             return False
+
         else:
             self.now_page += 1
 
@@ -84,3 +84,17 @@ class Keyboard_pages(Pages):
             return self.page_list[0]["metadata"]
         return self.page_list[self.now_page - 1]["metadata"]
     
+    def turn_right_page(self):
+        if self.now_page + 1 > self.page_count:
+            return False
+        
+        self.now_page += 1
+        return self.get_page()
+        
+    def turn_left_page(self):
+        if self.now_page - 1 <= 0:
+            return False
+        
+        self.now_page -= 1
+        return self.get_page()
+

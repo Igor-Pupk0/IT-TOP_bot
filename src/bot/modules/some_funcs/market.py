@@ -23,8 +23,8 @@ def setup_market_module(bot: telebot.TeleBot):
         keyboard.add(turn_left_button, turn_right_button, make_return_button())
         pages_obj = Pages()
 
-        total_count = market_products["total_count"] + 1
         products_list = market_products["products_list"]
+        total_count = len(products_list)
 
         for num, product in enumerate(products_list):
             product_name = product["title"]
