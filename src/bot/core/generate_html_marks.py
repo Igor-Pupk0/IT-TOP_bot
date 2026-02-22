@@ -7,7 +7,7 @@ import requests
 import jinja2
 
 # STORAGE_SERVICE_URL_2 = "https://envs.sh"
-STORAGE_SERVICE_URL_2 = "https://0x0.st"
+STORAGE_SERVICE_URL_2 = "https://0.vern.cc/"
 
 user_agent_headers = {"User-Agent": "IT-TOP_bot/1.0"}
 

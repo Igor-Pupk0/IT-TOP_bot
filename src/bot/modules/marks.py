@@ -22,6 +22,6 @@ def setup_marks_module(bot: telebot.TeleBot):
         marks_page_url = generate_marks_page(marks)
         
         keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
-        see_marks_button = telebot.types.InlineKeyboardButton("Посмотреть", web_app=telebot.types.WebAppInfo(marks_page_url))
-        keyboard.add(see_marks_button, make_return_button())
-        bot.send_message(message.chat.id, "Оценки готовы к просмотру, нажмите на кнопку для их просмотра в привычном виде", reply_markup=keyboard)
+        keyboard.add(make_return_button())
+        bot.send_message(message.chat.id, f"Оценки готовы к просмотру, так как КОЕ КАКОЙ файловый хостер заблочил мой ip, то оценки в телеграмме больше не \
+посмотреть, так что вот <a href='{marks_page_url}'>ссылка</a>", reply_markup=keyboard, parse_mode="html")
