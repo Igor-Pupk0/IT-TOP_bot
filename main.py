@@ -14,7 +14,7 @@ async def start_bot():
     logger.info(f"Инициализация бота на профиле {ENV}")
     
     if ENV == "prod":
-        from web.webhooks import setup_webhooks_module
+        from src.web.webhooks import setup_webhooks_module
         setup_webhooks_module(bot, app) 
     elif ENV == "dev":
         loop = asyncio.get_event_loop()
