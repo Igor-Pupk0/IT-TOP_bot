@@ -1,6 +1,3 @@
-###
-### Аналог временных хранилищ файлов для оценок
-###
 import os
 import uuid
 import asyncio
@@ -31,16 +28,14 @@ async def remove_file_after_delay(path: str, delay: int):
         os.remove(path)
         print(f"Файл {path} успешно выпилен.")
 
-@app.middleware("http")
-async def ip_filter_middleware(request: Request, call_next):
-    client_ip = request.client.host
-    if request.method == "POST" and client_ip not in ALLOWED_IPS:
-        raise HTTPException(status_code=403, detail="IP not allowed")
-    return await call_next(request)
-
 def verify_token(token: str = Depends(api_key_header)):
     if token != API_TOKEN:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+def verify_ip(request: Request):
+    client_ip = request.client.host
+    if client_ip not in ALLOWED_IPS:
+        raise HTTPException(status_code=403, detail=f"IP {client_ip} not allowed for uploads")
 
 @app.post("/upload")
 @limiter.limit("5/minute")
@@ -48,7 +43,8 @@ async def upload_file(
     request: Request,
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    _ = Depends(verify_token)
+    _ = Depends(verify_token),
+    __ = Depends(verify_ip)
 ):
     if not file.filename.endswith((".html", ".txt")):
         raise HTTPException(status_code=400, detail="Only HTML or TXT allowed")
