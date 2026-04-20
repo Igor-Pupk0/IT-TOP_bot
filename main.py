@@ -1,6 +1,6 @@
 from src.bot.core.logs import logger
 from src.bot.core.storage import ENV
-from web.upload import app
+from src.web.upload import app
 import uvicorn
 import asyncio
 
