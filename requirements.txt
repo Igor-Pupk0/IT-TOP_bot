@@ -2,8 +2,11 @@ pyTelegramBotAPI
 requests
 watchdog
 psutil
-flask
+fastapi
+slowapi
+uvicorn
 jinja2
 sqlalchemy
 psycopg2-binary
 apscheduler
+python-multipart

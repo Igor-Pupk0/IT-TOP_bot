@@ -6,19 +6,32 @@
 import requests
 import jinja2
 
-# STORAGE_SERVICE_URL_2 = "https://envs.sh"
-STORAGE_SERVICE_URL_2 = "https://0.vern.cc/"
-
-user_agent_headers = {"User-Agent": "IT-TOP_bot/1.0"}
+STORAGE_SERVICE_URL = "http://127.0.0.1:8000/upload"
+AUTH_TOKEN = "broodskoye"
 
 def upload_html_page(file_content: str):
-
-    file_post_data = {"file": ("mne.html", file_content.encode("utf-8"), "text/html")}
-    post_data = {"secret": "zov",
-                 "expires": 3}
+    files = {"file": ("mne.html", file_content.encode("utf-8"), "text/html")}
     
-    response = requests.post(STORAGE_SERVICE_URL_2, files=file_post_data, data=post_data, headers=user_agent_headers)
-    return response.text[:-1]
+    headers = {
+        "User-Agent": "IT-TOP_bot/1.0",
+        "X-Auth-Token": AUTH_TOKEN
+    }
+    
+    try:
+        response = requests.post(
+            STORAGE_SERVICE_URL, 
+            files=files, 
+            headers=headers,
+            timeout=5
+        )
+        if response.status_code == 200:
+            return response.text.strip('"')
+        elif response.status_code == 429:
+            return "Error: Too many requests (Rate limit)"
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Connection error: {e}"
 
 def generate_marks_page(marks_list: list) -> str:
 
