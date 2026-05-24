@@ -16,4 +16,5 @@ settings_db_obj = Settings_db()
 users_states = {} # Состояния пользователей
 user_auths = {} # Авторизированные пользователи
 homework_pages_data = {} # Странички домашкних заданий
+settings_pages = {}
 notification_scheduler = AsyncIOScheduler(timezone="Asia/Krasnoyarsk")

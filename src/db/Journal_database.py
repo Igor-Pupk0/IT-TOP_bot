@@ -98,7 +98,7 @@ class Settings_db:
             await conn.execute(query)
 
     async def init_user_settings(self, telegram_id: int):
-        default_settings = {"get_almost_expired_hw_notifications": True, "get_admin_broadcasts": True}
+        default_settings = {"get_almost_expired_hw_notifications": True, "get_admin_broadcasts": True, "timezone": "0"}
         query = sqlalchemy.text('INSERT INTO user_settings (telegram_id, settings) VALUES (:telegram_id, :settings)')
         async with self.engine.begin() as conn:
             await conn.execute(
