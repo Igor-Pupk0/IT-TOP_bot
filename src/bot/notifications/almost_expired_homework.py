@@ -24,6 +24,7 @@ async def check_homework(bot: aiogram.Bot, user_id: int):
     if resp.get("get_almost_expired_hw_notifications") == False:
         return
 
+    timezone = resp.get('timezone')
     user_states = get_user_status(user_id)
     homework_count = await (get_user_status(user_id).API.get_homework_count())
     
@@ -38,14 +39,22 @@ async def check_homework(bot: aiogram.Bot, user_id: int):
         if actual_homeworks == 500 or actual_homeworks == False:
             continue
         print(user_id, actual_homeworks)
-        await send_homework_notification(bot, actual_homeworks, user_id)
+        await send_homework_notification(bot, actual_homeworks, user_id, timezone)
 
 
 
-async def send_homework_notification(bot: aiogram.Bot, actual_homeworks: list, user_id):
+async def send_homework_notification(bot: aiogram.Bot, actual_homeworks: list, user_id, timezone: str):
     for homework in actual_homeworks:
         deadline = homework.get("overdue_time")
         time_to_expire = datetime.datetime.fromisoformat(deadline) - datetime.datetime.today()
+        print(timezone)
+        if len(timezone) == 2:
+            operation, number = timezone[0], timezone[1]
+            if operation == '+':
+                time_to_expire += datetime.timedelta(hours=int(number))
+            else:
+                time_to_expire -= datetime.timedelta(hours=int(number))
+
         if time_to_expire.days in [0, 1]:
             hours = time_to_expire.seconds / 60 / 60
             days = time_to_expire.days
@@ -100,7 +109,7 @@ async def init_almost_expired_homework_notification(bot):
     
     notification_scheduler.add_job(
         check_homework_start,
-        trigger=apscheduler.triggers.cron.CronTrigger(hour='7,12,18', minute=0),
+        trigger=apscheduler.triggers.cron.CronTrigger(hour='*', minute=59),
         id='almost_exp_notification',
         args=[bot]
     )
