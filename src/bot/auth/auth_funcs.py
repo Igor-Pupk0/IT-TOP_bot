@@ -27,8 +27,8 @@ def check_auth(func):
 
         if user_data is None and message_or_call.from_user.id not in user_auths:
             markup = InlineKeyboardBuilder()
-            markup.add(aiogram.types.InlineKeyboardButton(text="Авторизоваться", callback_data="init_auth"))
-            await message_or_call.answer("Авторизируйтесь!", reply_markup=markup.as_markup())
+            markup.add(aiogram.types.InlineKeyboardButton(text="Вход", callback_data="init_auth"))
+            await message_or_call.answer("Войди в аккаунт!", reply_markup=markup.as_markup())
             return
 
         if user_data and user_data[2] == 'None':

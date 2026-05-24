@@ -5,6 +5,7 @@
 
 from ..storage import db_obj
 from src.bot.core.logs import logger
+from ..bot.auth.delete import delete_user
 import httpx
 import json
 
@@ -23,12 +24,11 @@ class API:
                     telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
                         return 422
-                else:
-                    await self.update_JWT_headers()
+                elif await self.update_JWT_headers() == 422:
+                    telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
+                    await delete_user(telegram_id)
                     return
 
-
-                    # await logout(telegram_id[0])
             else:
                 logger.error(f"Error in some func: {ex}")
                 return response.status_code
@@ -52,7 +52,7 @@ class API:
 
     async def init_user(self):
         if await self.update_JWT_headers() == 422:
-            return
+            return False
         self.succesful_auth = True
 
 

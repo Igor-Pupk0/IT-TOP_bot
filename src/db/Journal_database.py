@@ -78,7 +78,7 @@ class Creds_db:
                 {"username": username}
             )
 
-        return result.fetchone()
+        return result.fetchone()[0]
     
 
 class Settings_db:
