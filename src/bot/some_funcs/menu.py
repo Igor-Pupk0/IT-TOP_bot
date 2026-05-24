@@ -11,7 +11,7 @@ from .exams import exams_router
 from .feedbacks import feedbacks_router
 from .leaderboards import leaderboards_router
 from .activity import activity_router
-from .settings import settings_router
+from .settings.settings import settings_router
 
 some_menu_router = aiogram.Router()
 some_menu_router.include_routers(

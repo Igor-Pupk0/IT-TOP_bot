@@ -19,7 +19,7 @@ broadcast_router = aiogram.Router()
 async def get_broadcast_message(call: aiogram.types.CallbackQuery, state: FSMContext):
 
     keyboard = InlineKeyboardBuilder()
-    cancel_button = aiogram.types.InlineKeyboardButton(text="❌ Отмена", callback_data="return_broadcast")
+    cancel_button = aiogram.types.InlineKeyboardButton(text="❌ Отмена", callback_data="return_state")
     keyboard.add(cancel_button)
     keyboard.adjust(1)
     await call.answer()
