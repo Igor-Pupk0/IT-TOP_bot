@@ -2,7 +2,6 @@ import aiogram
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from src.bot.core.logs import logger
-from ...storage import SUPPORT_USERNAME
 
 start_router = aiogram.Router()
 
@@ -26,9 +25,9 @@ def generate_start_message() -> str:
         aiogram.types.KeyboardButton(text="🕵🏿‍♂️ Профиль"),
         aiogram.types.KeyboardButton(text="📔 ДЗ"),
         aiogram.types.KeyboardButton(text="5️⃣ Оценки"),
-        aiogram.types.KeyboardButton(text="🐥 Разное")
+        aiogram.types.KeyboardButton(text="🐥 Разное"),
+        aiogram.types.KeyboardButton(text="🌐 О боте")
     )
-    keyboard.adjust(3, 2)
-    text = f"Привет! Это бот журнал, здесь ты можешь посмотреть почти все, что связано с учебой. \
-Связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>"
+    keyboard.adjust(3, 3)
+    text = f"Привет! Это бот журнал, здесь ты можешь посмотреть почти все, что связано с учебой. Для начала советую заглянуть в раздел '🌐 О боте'"
     return (text, keyboard.as_markup(resize_keyboard=True))

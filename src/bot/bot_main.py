@@ -15,6 +15,7 @@ from .main_functions.marks.marks import marks_router
 
 from .admin.admin import admin_router
 from .some_funcs.menu import some_menu_router
+from .about import about_router
 
 core_routers = [
     auth_router,
@@ -34,7 +35,8 @@ dp.include_routers(
     *core_routers,
     *main_routers,
     some_menu_router,
-    admin_router
+    admin_router,
+    about_router
 )
 # setup_returns_module(bot)
 # setup_profile_module(bot)
