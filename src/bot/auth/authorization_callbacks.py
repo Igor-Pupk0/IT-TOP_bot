@@ -61,7 +61,7 @@ async def auth_password(message: aiogram.types.Message, state: FSMContext):
         await message.answer("Неправильные данные")
     else:
         logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) вошел в аккаунт")
-        await message.answer("Успешный вход!")
+        await message.answer("Успешный вход! Для начала советую заглянуть в раздел '🌐 О боте'")
 
         user_auths[message.from_user.id] = {}
         user_auths[message.from_user.id]['User_obj'] = user_api

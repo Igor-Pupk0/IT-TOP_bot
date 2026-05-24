@@ -29,5 +29,5 @@ def generate_start_message() -> str:
         aiogram.types.KeyboardButton(text="🌐 О боте")
     )
     keyboard.adjust(3, 3)
-    text = f"Привет! Это бот журнал, здесь ты можешь посмотреть почти все, что связано с учебой. Для начала советую заглянуть в раздел '🌐 О боте'"
+    text = f"Привет! Это бот журнал, здесь ты можешь посмотреть почти все, что связано с учебой."
     return (text, keyboard.as_markup(resize_keyboard=True))
