@@ -85,6 +85,27 @@ def match_user_activity_achievements_name(ach_name: str):
             return "Оценка занятия"
         case "UNCONFIRMED_ATTRIBUTE":
             return "Не заполнены данные в лк"
-        
+        case "SURVEY":
+            return "Участие в опросе"
+        case "INTIME_LABORATORY_WORK":
+            return "Вовремя сданная лабораторная"
+        case "FILL_IN_PROFILE":
+            return "Заполнение профиля"
+        case "20_VISITS_WITHOUT_GAP":
+            return "20 посещений подряд"
+        case "20_VISITS_WITHOUT_DELAY":
+            return "20 посещений без опозданий"
+        case "10_VISITS_WITHOUT_GAP":
+            return "10 посещений подряд"
+        case "10_VISITS_WITHOUT_DELAY":
+            return "10 посещений без опозданий"
+        case "5_VISITS_WITHOUT_GAP":
+            return "5 посещений подряд"
+        case "5_VISITS_WITHOUT_DELAY":
+            return "5 посещений без опозданий"
+        case "EMAIL_CONFIRMATION":
+            return "Подтвержденная почта"
+        case "AUTO_MARK_EXPIRED_HOMEWORK":
+            return "Автоматическая оценка просроченного дз"
     
     return "??"
