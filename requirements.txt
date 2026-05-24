@@ -1,0 +1,11 @@
+aiogram
+httpx
+watchdog
+psutil
+fastapi
+jinja2
+sqlalchemy
+asyncpg
+apscheduler
+uvicorn
+python-multipart

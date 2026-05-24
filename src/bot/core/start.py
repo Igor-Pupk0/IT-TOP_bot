@@ -1,0 +1,34 @@
+import aiogram
+from aiogram.filters import Command
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from src.bot.core.logs import logger
+from ...storage import SUPPORT_USERNAME
+
+start_router = aiogram.Router()
+
+@start_router.message(Command("start"))
+async def start(message: aiogram.types.Message):
+    logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) ввел команду /start")
+
+    text, keyboard = generate_start_message()
+
+    await message.answer(
+        text=text, 
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
+
+
+def generate_start_message() -> str:
+    keyboard = ReplyKeyboardBuilder()
+    keyboard.add(
+        aiogram.types.KeyboardButton(text="📅 Раписание"),
+        aiogram.types.KeyboardButton(text="🕵🏿‍♂️ Профиль"),
+        aiogram.types.KeyboardButton(text="📔 ДЗ"),
+        aiogram.types.KeyboardButton(text="5️⃣ Оценки"),
+        aiogram.types.KeyboardButton(text="🐥 Разное")
+    )
+    keyboard.adjust(3, 2)
+    text = f"Привет! Это бот журнал, здесь ты можешь посмотреть почти все, что связано с учебой. \
+Связь с разработчиком: <a href='t.me/{SUPPORT_USERNAME}'>Кликабельно</a>"
+    return (text, keyboard.as_markup(resize_keyboard=True))

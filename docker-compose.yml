@@ -1,0 +1,40 @@
+services:
+  bot:
+    build: . 
+    container_name: it-top_bot
+    image: it-top_bot:latest
+    restart: on-failure
+    volumes:
+      - files:/app/files
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - MARKS_ENDPOINT=${MARKS_ENDPOINT}
+      - MARKS_DOMAIN=${MARKS_DOMAIN}
+      - DEV_TELEGRAM_ID=${DEV_TELEGRAM_ID}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
+    networks:
+      - botnet
+    ports:
+      - 8000:8000
+
+  database:
+    image: postgres:15.15
+    container_name: postgres_db 
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - botnet
+
+volumes:
+  certs:
+  files:
+  postgres_data:
+
+networks:
+  botnet:
+    driver: bridge 

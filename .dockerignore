@@ -1,0 +1,10 @@
+.git
+.gitignore
+__pycache__
+*.pyc 
+.vscode
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md
+TODO
