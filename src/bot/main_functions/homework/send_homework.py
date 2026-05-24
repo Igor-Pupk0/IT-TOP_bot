@@ -199,7 +199,7 @@ async def get_sended_file(message: aiogram.types.Message, state: FSMContext):
 @check_auth
 async def call_checkout_homework(call: aiogram.types.CallbackQuery):
     hw_data: dict = homework_pages_data.get(call.from_user.id)
-    await call.answer()
+    
     if hw_data == None:
         await call.message.answer(text="Вы не заполнили все необходимые поля! (время, файл/текстовый ответ)")
         return
@@ -243,6 +243,7 @@ async def call_checkout_homework(call: aiogram.types.CallbackQuery):
         await call.message.answer(text=get_500_message(call))
         return
     elif sended_request:
+        await call.answer()
         await call.message.answer(text="Все успешно отправлено!")
 
     homework_pages_data.pop(call.from_user.id)
