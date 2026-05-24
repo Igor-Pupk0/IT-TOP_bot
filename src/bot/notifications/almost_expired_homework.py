@@ -84,14 +84,7 @@ async def send_homework_notification(bot: aiogram.Bot, actual_homeworks: list, u
                 logger.warning(f"Ошибка запроса для {user_id}: {e}")
 
             except Exception as e:
-                logger.error(f"Непредвиденная ошибка при рассылке пользователю {user_id}: {e}", exc_info=True)
-
-        else:
-                await bot.send_message(
-                    chat_id=user_id,
-                    text=notification_prefix + f"До просрочки дз по <i>{homework.get("name_spec")}</i> осталось около <b>дохуя</b>, раскумарься!",
-                    parse_mode="HTML")
-                    
+                logger.error(f"Непредвиденная ошибка при рассылке пользователю {user_id}: {e}", exc_info=True)                    
 
 
 
