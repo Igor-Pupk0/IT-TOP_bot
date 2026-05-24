@@ -27,11 +27,9 @@ IT-TOP Bot - это Telegram-бот, разработанный для упро�
 Проект построен на современном стеке технологий, обеспечивающем его стабильность, производительность и масштабируемость:
 
 *   **Python:** Основной язык разработки.
-*   **Flask:** Для вебхуков.
 *   **Docker:** Контейнеризация приложения для легкой изоляции и развертывания.
-*   **Nginx:** Высокопроизводительный веб-сервер, используемый для тех же вебхуков.
 *   **PostgreSQL:** Надежная реляционная база данных для хранения информации.
-*   **Telebot:** Фреймворк для разработки Telegram-ботов на Python.
+*   **Aiogram:** Асинхронный фреймворк для разработки Telegram-ботов на Python.
 
 ## Установка и Запуск
 
@@ -55,92 +53,85 @@ IT-TOP Bot - это Telegram-бот, разработанный для упро�
     *   `POSTGRES_DB_NAME`: Имя базы данных PostgreSQL для хранения данных бота.
     *   `POSTGRES_PASSWORD`: Пароль для доступа к базе данных PostgreSQL.
     *   `DEV_TELEGRAM_ID`: Telegram ID разработчика, необходимый для доступа к административным функциям (например, `/skibidi_admin`).
-    *   `BOT_ENV`: Режим запуска бота. Возможные значения:
-        *   `dev`: Использует `infinity_polling` для запуска на локальном ПК.
-        *   `prod`: Использует вебхуки для запуска на сервере.
-
-    **Параметры, необходимые для режима `prod`:**
-
-    *   `WEBHOOK_DOMAIN`: Доменное имя вашего сервера, используемое для вебхуков.
-    *   `WEBHOOK_ENDPOINT`: Эндпоинт вебхука на вашем сервере (например, `/webhook`).
-
-    **Важно для `prod` режима:** Если вы используете режим `prod`, необходимо наличие сертификата Let's Encrypt (или аналогичного). Файлы сертификата (например, `fullchain.pem` и `privkey.pem`) должны быть помещены в папку `certs/` в корне проекта.
+    *   `MARKS_DOMAIN`: Доменное имя вашего сервера, используемое для просмотра оценок.
+    *   `MARKS_ENDPOINT`: Эндпоинт оценок, проще говоря папка с файлами оценок (например `marks`).
 
 3.  **Разверните приложение с помощью Docker Compose:**
-
-    *   **Для режима `prod` (на сервере с вебхуками):**
-        ```bash
-        docker compose --profile prod up -d
-        ```
-    *   **Для режима `dev` (локально с polling):**
-        ```bash
-        docker compose up -d
-        ```
-    Эти команды соберут Docker-образы и запустят все сервисы (бот, API, Nginx, PostgreSQL) в фоновом режиме в соответствии с выбранным профилем.
+    ```bash
+    docker compose up -d
+    ```
+    Эта команда соберет Docker-образы и запустит все сервисы (бот, веб сервер, PostgreSQL) в фоновом режиме.
 
 ## Использование
 
 После успешного запуска бота, вы можете взаимодействовать с ним через Telegram. Найдите бота по его имени и используйте команду `/start` для начала работы.
 
-**Важное примечание:** Из-за зависимости от внешнего сервиса на который загружаются html файлы с оценками, который не работает без vpn, сами оценки могут не загружаться
-
 ### Структура проекта
 
 ```
-.dockerignore
-.env_example
-.gitignore
-docker_entrypoint.sh
-docker-compose.yml
-Dockerfile
-main.py
-README.md
-requirements.txt
-certs/
-files/
-│   └───nginx.conf.example
-src/
-    ├───api/
-    │   └───Journal_API.py
-    ├───bot/
-    │   ├───bot_main.py
-    │   ├───webhooks.py
-    │   ├───core/
-    │   │   ├───generate_html_marks.py
-    │   │   ├───journal_500.py
-    │   │   ├───keyboards.py
-    │   │   ├───logs.py
-    │   │   ├───pages.py
-    │   │   ├───states.py
-    │   │   ├───storage.py
-    │   │   └───user.py
-    │   ├───modules/
-    │   │   ├───admin_funcs.py
-    │   │   ├───authorization.py
-    │   │   ├───marks.py
-    │   │   ├───menu_returns.py
-    │   │   ├───pages_callbacks.py
-    │   │   ├───profile.py
-    │   │   ├───schedule.py
-    │   │   ├───start.py
-    │   │   ├───statistic.py
-    │   │   ├───homework/
-    │   │   │   ├───delete_homework.py
-    │   │   │   ├───get_homework.py
-    │   │   │   └───send_homework.py
-    │   │   └───some_funcs/
-    │   │       ├───activity.py
-    │   │       ├───exams.py
-    │   │       ├───feedbacks.py
-    │   │       ├───leaderboards.py
-    │   │       ├───market.py
-    │   │       ├───menu.py
-    │   │       ├───rate_all_lessons.py
-    │   │       └───settings.py
-    │   └───notifications/
-    │       ├───almost_expired_homework.py
-    │       └───notifications_main.py
-    ├───db/
-    │   └───Journal_database.py
-    └───templates/
-        └───marks.html
+.
+├── docker-compose.yml
+├── Dockerfile
+├── main.py
+├── README.md
+├── requirements.txt
+├── src
+│   ├── api
+│   │   └── Journal_API.py
+│   ├── bot
+│   │   ├── about.py
+│   │   ├── admin
+│   │   │   ├── admin_funcs.py
+│   │   │   ├── admin.py
+│   │   │   └── broadcast.py
+│   │   ├── auth
+│   │   │   ├── auth_funcs.py
+│   │   │   └── authorization_callbacks.py
+│   │   ├── bot_main.py
+│   │   ├── core
+│   │   │   ├── journal_500.py
+│   │   │   ├── keyboards.py
+│   │   │   ├── logs.py
+│   │   │   ├── pages_callbacks.py
+│   │   │   ├── pages.py
+│   │   │   ├── returns.py
+│   │   │   ├── start.py
+│   │   │   ├── states.py
+│   │   │   └── user.py
+│   │   ├── main_functions
+│   │   │   ├── homework
+│   │   │   │   ├── delete_homework.py
+│   │   │   │   ├── get_homework.py
+│   │   │   │   └── send_homework.py
+│   │   │   ├── marks
+│   │   │   │   ├── generate_html_marks.py
+│   │   │   │   ├── marks.py
+│   │   │   │   └── upload.py
+│   │   │   ├── profile
+│   │   │   │   ├── profile.py
+│   │   │   │   └── statistic.py
+│   │   │   └── schedule.py
+│   │   ├── notifications
+│   │   │   ├── almost_expired_homework.py
+│   │   │   └── notifications_main.py
+│   │   └── some_funcs
+│   │       ├── activity.py
+│   │       ├── exams.py
+│   │       ├── feedbacks.py
+│   │       ├── leaderboards.py
+│   │       ├── market.py
+│   │       ├── menu.py
+│   │       ├── rate_all_lessons.py
+│   │       └── settings
+│   │           ├── get_broadcast.py
+│   │           ├── get_homework_notifications.py
+│   │           ├── settings_funcs.py
+│   │           ├── settings.py
+│   │           └── timezone.py
+│   ├── db
+│   │   └── Journal_database.py
+│   ├── storage.py
+│   └── templates
+│       └── marks.html
+└── TODO
+```

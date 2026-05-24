@@ -1,5 +1,5 @@
 from .user import User
-from .storage import users_states, user_auths
+from ...storage import users_states, user_auths
 
 def get_user_status(telegram_id):
     user_states: User = users_states.get(telegram_id)

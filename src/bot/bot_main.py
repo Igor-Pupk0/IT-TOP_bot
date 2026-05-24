@@ -1,49 +1,60 @@
-import telebot
-from .core.storage import TOKEN
+import aiogram
+from ..storage import dp
 
-from .modules.menu_returns import setup_returns_module
-from .modules.profile import setup_profile_module
-from .modules.schedule import setup_schedule_module
-from .modules.homework.get_homework import setup_get_homework_module
-from .modules.start import setup_start_module
-from .modules.pages_callbacks import setup_pages_cb_module
-from .modules.authorization import setup_auth_module
-from .modules.admin_funcs import setup_admin_module
-from .modules.homework.send_homework import setup_send_homework_module
-from .modules.homework.delete_homework import setup_delete_homework_module
-from .modules.marks import setup_marks_module
-from .modules.some_funcs.menu import setup_some_module
-from .modules.some_funcs.rate_all_lessons import setup_rate_lessons_module
-from .modules.some_funcs.feedbacks import setup_get_feedbacks_module
-from .notifications.notifications_main import init_notifications
-from .modules.some_funcs.market import setup_market_module
-from .modules.statistic import setup_stats_module
-from .modules.some_funcs.settings import setup_settings_module
-from .modules.some_funcs.leaderboards import setup_leaderboards_module
-from .modules.some_funcs.activity import setup_activity_module
-from .modules.some_funcs.exams import setup_exams_module
+### Импорт НЕОБХОДИМОГО функционала, без него бот просто не будет нормально работать
+from .core.returns import return_router
+from .core.start import start_router
+from .core.pages_callbacks import page_callback_router
+from .auth.authorization_callbacks import auth_router
 
-bot = telebot.TeleBot(TOKEN)
+### Тут уже основной функционал
+from .main_functions.profile.profile import profile_router
+from .main_functions.schedule import schedule_router
+from .main_functions.homework.get_homework import homework_router
+from .main_functions.marks.marks import marks_router
 
-setup_start_module(bot)
-setup_auth_module(bot)
-setup_returns_module(bot)
-setup_profile_module(bot)
-setup_get_homework_module(bot)
-setup_schedule_module(bot)
-setup_pages_cb_module(bot)
-setup_admin_module(bot)
-setup_send_homework_module(bot)
-setup_delete_homework_module(bot)
-setup_marks_module(bot)
-setup_some_module(bot)
-setup_rate_lessons_module(bot)
-setup_get_feedbacks_module(bot)
-setup_market_module(bot)
-setup_stats_module(bot)
-setup_settings_module(bot)
-setup_leaderboards_module(bot)
-setup_activity_module(bot)
-setup_exams_module(bot)
+from .admin.admin import admin_router
+from .some_funcs.menu import some_menu_router
+from .about import about_router
 
-init_notifications(bot)
+core_routers = [
+    auth_router,
+    start_router,
+    return_router,
+    page_callback_router
+]
+
+main_routers = [
+    schedule_router,
+    profile_router,
+    homework_router,
+    marks_router
+]
+
+dp.include_routers(
+    *core_routers,
+    *main_routers,
+    some_menu_router,
+    admin_router,
+    about_router
+)
+# setup_returns_module(bot)
+# setup_profile_module(bot)
+# setup_get_homework_module(bot)
+# setup_schedule_module(bot)
+# setup_pages_cb_module(bot)
+# setup_admin_module(bot)
+# setup_send_homework_module(bot)
+# setup_delete_homework_module(bot)
+# setup_marks_module(bot)
+# setup_some_module(bot)
+# setup_rate_lessons_module(bot)
+# setup_get_feedbacks_module(bot)
+# setup_market_module(bot)
+# setup_stats_module(bot)
+# setup_settings_module(bot)
+# setup_leaderboards_module(bot)
+# setup_activity_module(bot)
+# setup_exams_module(bot)
+
+# init_notifications(bot)

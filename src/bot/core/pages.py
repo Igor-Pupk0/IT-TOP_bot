@@ -1,4 +1,5 @@
-import telebot
+import aiogram
+import asyncio
 messages_pages = {}
 
 class Pages():
@@ -21,15 +22,14 @@ class Pages():
             return self.page_list[0]["metadata"]
         return self.page_list[self.now_page - 1]["metadata"]
     
-    def turn_right_page(self):
+    async def turn_right_page(self):
         
         if 'debug_page' == self.get_next_page():
             debug_page_index = self.now_page
             self.now_page += 1
             debug_page = self.get_debug_page()
-            dp_func: function = debug_page['metadata']['invoke_function']
-            dp_func_args = debug_page['metadata']['invoke_function_args']
-            dp_func(*dp_func_args)
+            dp_func = debug_page['metadata']['invoke_function']
+            await dp_func
             self.delete_page(debug_page_index)
             return self.get_page()
 
@@ -70,7 +70,7 @@ class Pages():
 
 
 class Keyboard_pages(Pages):
-    def add_page(self, keyboard: telebot.types.InlineKeyboardMarkup, metadata = None):
+    def add_page(self, keyboard: aiogram.types.InlineKeyboardMarkup, metadata = None):
         self.page_list.append({"keyboard": keyboard, "metadata": metadata})
         self.page_count += 1
 

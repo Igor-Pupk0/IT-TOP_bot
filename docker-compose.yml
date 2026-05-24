@@ -7,42 +7,16 @@ services:
     volumes:
       - files:/app/files
     environment:
-      - BOT_ENV=${BOT_ENV}
       - BOT_TOKEN=${BOT_TOKEN}
-      - WEBHOOK_ENDPOINT=${WEBHOOK_ENDPOINT}
-      - WEBHOOK_DOMAIN=${WEBHOOK_DOMAIN}
+      - MARKS_ENDPOINT=${MARKS_ENDPOINT}
+      - MARKS_DOMAIN=${MARKS_DOMAIN}
       - DEV_TELEGRAM_ID=${DEV_TELEGRAM_ID}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB_NAME}
     networks:
       - botnet
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx_proxy
-    restart: unless-stopped
-    profiles: ["prod"]
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - certs:/etc/letsencrypt
-      - files:/etc/nginx/conf.d
-    depends_on:
-      - bot
-    networks:
-      - botnet
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot_ssl
-    profiles: ["prod"]
-    volumes:
-      - certs:/etc/letsencrypt
-    entrypoint: >
-      sh -c "while :; do sleep 6h & wait $$!; 
-              certbot renew --webroot -w /var/www/certbot; 
-              nginx -s reload; done"
+      - 8000:8000
 
   database:
     image: postgres:15.15

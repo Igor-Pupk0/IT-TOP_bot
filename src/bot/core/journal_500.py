@@ -1,7 +1,7 @@
 from .logs import logger
-import telebot
+import aiogram
 
-def get_500_message(message_or_call: telebot.types.CallbackQuery):
+def get_500_message(message_or_call: aiogram.types.CallbackQuery):
     message = "❗️Основной функционал бота недоступен из-за проблем со стороны основного журнала, попробуйте позже"
     logger.warning(f"Пользователь ({message_or_call.from_user.username}:{message_or_call.from_user.id}): Журнал не работает")
     return message

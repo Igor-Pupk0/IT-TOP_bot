@@ -10,4 +10,4 @@ RUN ["pip", "install", "-r", "requirements.txt"]
 
 COPY . /app
 
-ENTRYPOINT ["sh", "./docker_entrypoint.sh"]
+ENTRYPOINT ["python", "./main.py"]

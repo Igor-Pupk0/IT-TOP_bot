@@ -1,12 +1,11 @@
-pyTelegramBotAPI
-requests
+aiogram
+httpx
 watchdog
 psutil
 fastapi
-slowapi
-uvicorn
 jinja2
 sqlalchemy
-psycopg2-binary
+asyncpg
 apscheduler
+uvicorn
 python-multipart
