@@ -19,11 +19,9 @@ homework_router.include_routers(
     delete_homework_router
 )
 
-async def generate_homeworks_page(telegram_id, pages_obj: Pages, homework_type, page):
+async def generate_homeworks_page(telegram_id, pages_obj: Pages, homework_type, page, homework_count: dict):
     today_date = datetime.datetime.today().isoformat()[:10]
     homework_message_to_send = ''
-
-    homework_count = await (get_user_status(telegram_id).API.get_homework_count())
 
     keyboard = InlineKeyboardBuilder()
     turn_left_button, turn_right_button = make_turn_pages_buttons()
@@ -250,7 +248,7 @@ async def generate_homeworks_page(telegram_id, pages_obj: Pages, homework_type, 
 
     if has_next_page:
 
-        pages_obj.add_debug_page({"invoke_function": generate_homeworks_page(telegram_id, pages_obj, homework_type, page+1), 
+        pages_obj.add_debug_page({"invoke_function": generate_homeworks_page(telegram_id, pages_obj, homework_type, page+1, homework_count=homework_count), 
                               'has_next_page': has_next_page})
 
 
@@ -296,7 +294,7 @@ async def call_get_homeworks(call: aiogram.types.CallbackQuery):
 
     pages_obj = Pages()
 
-    await generate_homeworks_page(call.from_user.id, pages_obj=pages_obj, homework_type=homework_type, page=1)
+    await generate_homeworks_page(call.from_user.id, pages_obj=pages_obj, homework_type=homework_type, page=1, homework_count=homework_count)
     
     keyboard.adjust(2, 1, 1)
     await call.answer()
