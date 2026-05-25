@@ -10,6 +10,7 @@ from src.api.Journal_API import API
 from ...storage import db_obj, settings_db_obj, user_auths
 from .auth_funcs import check_auth
 from ..core.logs import logger
+from .delete import delete_user
 
 
 class Auth_states(StatesGroup):
@@ -75,11 +76,9 @@ async def auth_password(message: aiogram.types.Message, state: FSMContext):
 @check_auth
 async def logout(call: aiogram.types.CallbackQuery, state: FSMContext):
     logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) вышел из аккаунта")
-    await db_obj.delete_user_by_telegram_id(call.from_user.id)
-    await settings_db_obj.delete_settings_by_telegram_id(call.from_user.id)
+
     await state.clear()
-    user_auths.pop(call.from_user.id)
     await call.answer()
-    await call.message.answer("Вы успешно вышли из аккаунта ✅")
+    await delete_user(user_id=call.from_user.id, message_text="Вы успешно вышли из аккаунта ✅")
 
 
