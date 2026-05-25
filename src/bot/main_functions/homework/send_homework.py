@@ -4,6 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import io
+import zipfile
 
 from ...auth.authorization_callbacks import check_auth
 from ...core.pages import Pages, messages_pages
@@ -42,6 +43,9 @@ async def call_send_homework_menu(call: aiogram.types.CallbackQuery):
             return
         
         homework_page: Pages = user_message_pages.get(call.message.message_id)
+        if homework_page == None:
+            await call.message.delete()
+            return
         page_metadata: dict = homework_page.get_page_metadata()
 
         homework_data = {"homework_id": page_metadata["homework_id"], "lesson_name": page_metadata["lesson_name"]}
@@ -150,103 +154,120 @@ async def get_sended_text_answer(message: aiogram.types.Message, state: FSMConte
 @check_auth
 async def call_write_homework_file(call: aiogram.types.CallbackQuery, state: FSMContext):
     logger.info(f"Пользователь ({call.from_user.username}:{call.from_user.id}) хочет отправить файл к ДЗ")
-    await call.message.answer(text="Отправьте свой файл (Оправлять видео или фотокарточки файлом! Лимиты:\n - нельзя больше 99 мегабайт\n - Нельзя .txt и .csv файлы)",
-                        reply_markup=make_cancel_keyboard())
+    await call.message.answer(
+        text=f"""Отправь файл(ы), если отправить несколько файлов, они упакуются в архив (Лимиты: \
+- нельзя больше 99 мегабайт \
+- Нельзя .txt и .csv файлы)""",
+        reply_markup=make_cancel_keyboard())
+
     await call.answer()
     await state.set_state(HomeWorkSendStates.file)
 
 @send_homework_router.message(HomeWorkSendStates.file)
 @check_auth
 async def get_sended_file(message: aiogram.types.Message, state: FSMContext):
-    logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) отправил файл")
-    await state.clear()
-
     user_homework_pages_data = homework_pages_data.get(message.from_user.id)
-    if user_homework_pages_data == None:
-        await message.answer(text="Ошибка, попробуйте запросить новое дз и через него снова сдать")
+    if user_homework_pages_data is None:
+        await message.answer("Ошибка: начните процесс сначала.")
         return
 
     if message.photo:
         file_id = message.photo[-1].file_id
         file_name = f"{file_id}.jpg"
-
     elif message.document:
         file_id = message.document.file_id
         file_name = message.document.file_name
+    else:
+        await message.answer("Это не файл/фото.")
+        return
+
+    files_list = user_homework_pages_data.get("files_list", [])
 
     FILE_99MB_SIZE_IN_BYTES = 830_472_192
-
     file_info = await message.bot.get_file(file_id)
 
     if file_info.file_size > FILE_99MB_SIZE_IN_BYTES:
-        await message.answer(text=f"Размер файла привышает 99 мегабайт")
+        await message.answer("Файл слишком большой (>99 МБ).")
         return
 
-    if ".txt" in file_name or ".csv" in file_name:
-        await message.answer(text="Недопустимый формат файла")
-        return
-    
-    
-    user_homework_pages_data.update({"homework_file_obj": file_info})
-    user_homework_pages_data.update({"file_name": file_name})
-    await message.answer(text="Файл принят")
+    files_list.append({"info": file_info, "name": file_name})
+    user_homework_pages_data["files_list"] = files_list
+
     keyboard, hw_message = make_homework_message(user_homework_pages_data)
-    await message.answer(text=hw_message,
-                    parse_mode="HTML",
-                    reply_markup=keyboard)
+    await message.answer(f"Файл принят. Всего файлов: {len(files_list)}. Пришли еще или нажми кнопку 'Назад/Отправить'\n\n{hw_message}", 
+                         reply_markup=keyboard,
+                         parse_mode='HTML')
     
 @send_homework_router.callback_query("send_homework" == F.data)
 @check_auth
 async def call_checkout_homework(call: aiogram.types.CallbackQuery):
     hw_data: dict = homework_pages_data.get(call.from_user.id)
     
-    if hw_data == None:
-        await call.message.answer(text="Вы не заполнили все необходимые поля! (время, файл/текстовый ответ)")
+    if hw_data is None:
+        await call.message.answer(text="Ошибка сессии! Попробуйте запросить ДЗ снова.")
         return
-    
 
-    text_answer = hw_data.get("text_answer")
+    text_answer = hw_data.get("text_answer", "")
     homework_time = hw_data.get("homework_time")
     homework_id = hw_data.get("homework_id")
-    homework_file: aiogram.types.File = hw_data.get("homework_file_obj")
+    files_list = hw_data.get("files_list", [])
+
+    if not homework_time:
+        await call.message.answer(text="Вы не указали время выполнения!")
+        return
+
+    if not homework_id:
+        await call.message.answer(text="Ошибка: не найден ID домашнего задания.")
+        return
+
+    if not text_answer and not files_list:
+        await call.message.answer(text="Вы не прикрепили ни файл, ни текстовый ответ.")
+        return
+
     homework_file_data = None
-    if homework_file == None:
-        homework_file = ''
-    else:
-        file_info = await call.message.bot.get_file(homework_file.file_id)
-        file_name = hw_data.get("file_name")
-        file_bytes = await call.message.bot.download_file(file_info.file_path)
+    file_name = None
 
-        homework_file_data = file_bytes.read()
+    if files_list:
+        if len(files_list) > 1:
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                for item in files_list:
+                    file_info = item["info"]
+                    file_bytes = await call.message.bot.download_file(file_info.file_path)
+                    zip_file.writestr(item["name"], file_bytes.read())
+            
+            zip_buffer.seek(0)
+            homework_file_data = zip_buffer.read()
+            file_name = "homework_archive(aitetop_bot).zip"
+        else:
+            item = files_list[0]
+            file_info = item["info"]
+            file_bytes = await call.message.bot.download_file(file_info.file_path)
+            homework_file_data = file_bytes.read()
+            file_name = item["name"]
 
-    if text_answer == None:
-        text_answer = ""
+    try:
+        api = get_user_status(call.from_user.id).API
+        sended_request = await api.send_homework(
+            homework_id, 
+            text_answer, 
+            file_name, 
+            homework_time, 
+            homework_file_data
+        )
 
-    if text_answer == "" and homework_file == "":
-        await call.message.answer(text="Вы не заполнили все необходимые поля! (файл/текстовый ответ)")
-        return
-
-    if homework_time == None:
-        await call.message.answer(text="Вы не заполнили все необходимые поля! (время)")
-        return
-
-    if homework_id == None:
-        await call.message.answer(text="Ошибка, попробуйте запросить новое дз и через него снова сдать")
-        return
-
-    if homework_file_data == None:
-        sended_request = await (get_user_status(call.from_user.id).API.send_homework(homework_id, text_answer, None, homework_time))
-    else:
-        sended_request = await (get_user_status(call.from_user.id).API.send_homework(homework_id, text_answer, file_name, homework_time, homework_file_data))
-
-    if not sended_request:
-        await call.message.answer(text=get_500_message(call))
-        return
-    elif sended_request:
+        if not sended_request:
+            await call.message.answer(text=get_500_message(call))
+            return
+            
         await call.answer()
         await call.message.answer(text="Все успешно отправлено!")
 
-    homework_pages_data.pop(call.from_user.id)
+        homework_pages_data.pop(call.from_user.id, None)
+
+    except Exception as e:
+        logger.error(f"Ошибка при отправке ДЗ: {e}")
+        await call.message.answer(text="Произошла непредвиденная ошибка при отправке.")
 
 
 @send_homework_router.callback_query("homework_send_cancel" == F.data )
@@ -307,13 +328,16 @@ def make_homework_message(hw_data: dict = None):
 
     if lesson_name == None:
         lesson_name = "<i>Тип имя предмета</i>"
+    
+    files_list = hw_data.get("files_list", [])
+    files_count = len(files_list)
 
 
     message = f"""\
 <b>Меню отправки ДЗ</b>
 <b>{lesson_name}</b>
 
-Прикрепленный файл: <i>{file_name}</i>
+Прикреплено файлов: <i>{files_count}</i>
 Текстовый ответ: <i>{text_answer}</i>
 Время: {homework_time}
 

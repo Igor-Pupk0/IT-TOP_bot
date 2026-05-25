@@ -269,6 +269,7 @@ async def call_get_homeworks(call: aiogram.types.CallbackQuery):
         return
     
     if homework_count[f'type_{homework_type}'] == 0:
+        await call.answer()
         return
     
     keyboard = InlineKeyboardBuilder()
