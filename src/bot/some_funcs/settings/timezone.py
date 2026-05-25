@@ -25,7 +25,7 @@ async def handle_set_timezone(call: aiogram.types.CallbackQuery, state: FSMConte
     await state.set_state(TimezoneState.waiting_timezone)
     await call.answer()
     await call.message.answer(
-        text="Введите свой часовой пояс относительно МСК в формате +/-4 (например: -1, +3, 0)",
+        text="Введи свой часовой пояс относительно МСК в формате +/-4 (например: -1, +3, 0). Он влияет на время отправки уведомлений о дз",
         reply_markup=keyboard.as_markup())
     
 @timezone_router.message(TimezoneState.waiting_timezone)
