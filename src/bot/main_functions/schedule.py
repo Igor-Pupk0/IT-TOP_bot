@@ -46,9 +46,9 @@ async def send_schedule(call: aiogram.types.CallbackQuery, iso_date):
 
         msg_to_send += f"""\
 Пара №{lesson_number} ({subject}):
-    - Время: <b>{start_time} - {end_time}</b>
-    - Ведет: <b>{teacher}</b>
-    - Кабинет: <b>{where}</b>
+  - Время: <b>{start_time} - {end_time}</b>
+  - Ведет: <b>{teacher}</b>
+  - Кабинет: <b>{where}</b>
             
 """
     await call.answer()
@@ -97,7 +97,7 @@ async def check_schedule(message: aiogram.types.Message):
         keyboard_pages_obj.add_page(keyboard.as_markup())
 
 
-    sended_message = await message.answer(text="Выберите дату:", reply_markup=keyboard_pages_obj.turn_right_page())
+    sended_message = await message.answer(text="Выбери дату:", reply_markup=keyboard_pages_obj.turn_right_page())
     messages_pages[message.from_user.id].update({sended_message.message_id: keyboard_pages_obj})
 
 def match_weekday_num(weekday_num: int) -> str:

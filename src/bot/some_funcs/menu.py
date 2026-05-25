@@ -30,7 +30,7 @@ async def handle_message(message: aiogram.types.Message):
     logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) выбрал '{message.text}'")
 
     profile_keyboard = InlineKeyboardBuilder()
-    logout_button = aiogram.types.InlineKeyboardButton(text="👍 Оценка пар", callback_data="rate_all_lessons")
+    logout_button = aiogram.types.InlineKeyboardButton(text="👍 Автооценка пар", callback_data="rate_all_lessons")
     feedbacks_button = aiogram.types.InlineKeyboardButton(text="⭐️ Отзывы", callback_data="show_student_feedbacks")
     market_button = aiogram.types.InlineKeyboardButton(text="💰 Маркет", callback_data="show_market")
     settings_button = aiogram.types.InlineKeyboardButton(text="⚙️ Настройки", callback_data="show_settings_menu")

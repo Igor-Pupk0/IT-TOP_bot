@@ -39,7 +39,6 @@ async def handle_message(message: aiogram.types.Message):
     topgems = user_info["gaming_points"][1]["points"]
 
     await message.answer(f"""\
-Твой профиль:
 Привет, <b>{name}</b>
 Твоя группа: {group_name}
 

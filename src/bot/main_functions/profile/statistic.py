@@ -44,7 +44,7 @@ async def handle_message(call: aiogram.types.CallbackQuery):
     await call.answer()
     await call.message.answer(text=f"""\
 Статистика:
-Ку, <b>{full_name}</b>
+Привет, <b>{full_name}</b>
 Группа: {group_name}
 
 Баланс:
@@ -57,7 +57,7 @@ async def handle_message(call: aiogram.types.CallbackQuery):
 - В потоке: <b>{leader_strean_top["studentPosition"]}</b>
 
 Сделано <b>{homework_done_procent}%</b> всех дз
-Посещаемость: <b>{visits_procent}%</b>
+Посещаемость за все время: <b>{visits_procent}%</b>
 Фотокарточка профиля: <a href='{photo_url}'>ТЫК</a>
 """, 
                     reply_markup=stats_keyboard.as_markup(),
