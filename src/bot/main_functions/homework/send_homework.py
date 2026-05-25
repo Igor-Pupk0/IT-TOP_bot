@@ -238,7 +238,7 @@ async def call_checkout_homework(call: aiogram.types.CallbackQuery):
             
             zip_buffer.seek(0)
             homework_file_data = zip_buffer.read()
-            file_name = "homework_archive(aitetop_bot).zip"
+            file_name = "homework_archive(igor_ppk_bot).zip"
         else:
             item = files_list[0]
             file_info = item["info"]
