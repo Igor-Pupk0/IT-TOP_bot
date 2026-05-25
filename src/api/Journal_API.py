@@ -199,20 +199,17 @@ class API:
         else:
             return False
     
-    async def delete_homework(self, checkout_homework_id):
+    async def delete_homework(self, checkout_homework_id) -> bool:
         url = f"https://{API_HOST}/api/v2/homework/operations/delete"
 
         post_data = {"id": checkout_homework_id}
         
         response = await self.__send_post_request(url, data=post_data)
         
-        json_responce_obj = json.loads(response.text)
-        if json_responce_obj == None or json_responce_obj == []:
-            return False
-                
-        json_responce_obj = json.loads(response.text)
+        if response.status_code == 204:
+            return True
         
-        return json_responce_obj
+        return False
     
 
     async def get_marks(self) -> dict:

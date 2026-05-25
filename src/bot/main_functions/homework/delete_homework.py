@@ -22,6 +22,9 @@ async def delete_homework(call: aiogram.types.CallbackQuery):
     page_metadata = page_obj.get_page_metadata()
     homework_maded_id = page_metadata.get("homework_maded_id")
 
-    await (get_user_status(call.from_user.id).API.delete_homework(homework_maded_id))
+    res = await (get_user_status(call.from_user.id).API.delete_homework(homework_maded_id))
 
-    await call.message.answer(text="✅ ДЗ было удалено успешно")
+    if res:
+        await call.message.answer(text="✅ ДЗ было удалено успешно")
+    else:
+        await call.message.answer(text="Дз не было удалено, попробуй еще раз")
