@@ -24,10 +24,11 @@ class API:
                     telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
                         return 422
-                elif await self.update_JWT_headers() == 422:
-                    telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
-                    await delete_user(telegram_id)
-                    return
+                if response.status_code == 401:
+                    if await self.update_JWT_headers() == 422:
+                        telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
+                        await delete_user(telegram_id)
+                        return
 
             else:
                 logger.error(f"Error in some func: {ex}")
