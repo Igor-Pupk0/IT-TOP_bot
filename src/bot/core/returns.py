@@ -26,10 +26,8 @@ async def menu_return(call: aiogram.types.CallbackQuery, state: FSMContext):
         case "return_and_delete_homework":
             if homework_pages_data.get(call.from_user.id) != None:
                 homework_pages_data.pop(call.from_user.id)
-            await call.message.delete()
             
         case "return_state":
             await state.clear()
-            await call.message.delete()
         
     await call.message.delete()
