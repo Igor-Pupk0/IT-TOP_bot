@@ -21,6 +21,9 @@ notification_prefix = """❗️Уведомление❗️\n\n"""
 async def check_homework(bot: aiogram.Bot, user_id: int):
     resp = await settings_db_obj.get_all_settings_by_telegram_id(user_id)
 
+    if resp == None:
+        await settings_db_obj.init_user_settings(user_id)
+
     if resp.get("get_almost_expired_hw_notifications") == False:
         return
 
