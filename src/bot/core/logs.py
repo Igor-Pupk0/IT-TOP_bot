@@ -9,3 +9,4 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("bot")
+logging.getLogger("httpx").setLevel(logging.WARNING)
