@@ -104,7 +104,7 @@ async def init_almost_expired_homework_notification(bot):
     
     notification_scheduler.add_job(
         check_homework_start,
-        trigger=apscheduler.triggers.cron.CronTrigger(hour='*', minute=46),
+        trigger=apscheduler.triggers.cron.CronTrigger(hour='*', minute=0),
         id='almost_exp_notification',
         args=[bot]
     )
