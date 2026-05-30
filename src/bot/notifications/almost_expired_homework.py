@@ -36,13 +36,11 @@ async def check_homework(bot: aiogram.Bot, user_id: int):
         return
 
     pages_count = homework_count["type_3"] // 7 + 2 # Кол-во домашек юзера разделить на кол-во домашек на одну страницу (6+1, потом еще + 1 страница и + 1 для цикла)
-    
     for page in range(1, pages_count):
         actual_homeworks = await user_states.API.get_homework(3, page)
 
         if actual_homeworks == 500 or actual_homeworks == False:
             continue
-        print(user_id, actual_homeworks)
         await send_homework_notification(bot, actual_homeworks, user_id, timezone)
 
 
@@ -50,18 +48,18 @@ async def check_homework(bot: aiogram.Bot, user_id: int):
 async def send_homework_notification(bot: aiogram.Bot, actual_homeworks: list, user_id, timezone: str):
     for homework in actual_homeworks:
         deadline = homework.get("overdue_time")
-        time_to_expire = datetime.datetime.fromisoformat(deadline) - datetime.datetime.today()
-        print(timezone)
+        time_to_expire = datetime.datetime.fromisoformat(deadline) - datetime.datetime.today()# + datetime.timedelta(days=1)
         if len(timezone) == 2:
             operation, number = timezone[0], timezone[1]
             if operation == '+':
-                time_to_expire += datetime.timedelta(hours=int(number))
-            else:
                 time_to_expire -= datetime.timedelta(hours=int(number))
+            else:
+                time_to_expire += datetime.timedelta(hours=int(number))
 
-        if time_to_expire.days in [0, 1]:
-            hours = time_to_expire.seconds / 60 / 60
-            days = time_to_expire.days
+        hours = time_to_expire.seconds / 60 / 60
+        days = time_to_expire.days
+
+        if days in [0, 1]:
             try:
                 if 16.5 < hours < 17.5 and days == 0:
                     await bot.send_message(
@@ -106,7 +104,7 @@ async def init_almost_expired_homework_notification(bot):
     
     notification_scheduler.add_job(
         check_homework_start,
-        trigger=apscheduler.triggers.cron.CronTrigger(hour='*', minute=59),
+        trigger=apscheduler.triggers.cron.CronTrigger(hour='*', minute=46),
         id='almost_exp_notification',
         args=[bot]
     )

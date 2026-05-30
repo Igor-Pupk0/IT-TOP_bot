@@ -43,7 +43,6 @@ async def set_timezone(message: aiogram.types.Message, state: FSMContext):
         await message.answer(text="Неправильный формат, попробуй еще раз")
         return
 
-    print(checked_timezone)
     logger.info(f"Пользователь ({message.from_user.username}:{message.from_user.id}) сменил в настройках таймзону на {message.text}")
 
     await settings_db_obj.update_user_settings(message.from_user.id, "timezone", checked_timezone)

@@ -1,6 +1,6 @@
 FROM python:3.13.7-slim
 
-ENV TZ=Asia/Krasnoyarsk
+ENV TZ=Europe/Moscow
 RUN ["apt", "update"]
 RUN ["apt", "install", "-y", "gettext-base"]
 COPY ./requirements.txt /app/requirements.txt
