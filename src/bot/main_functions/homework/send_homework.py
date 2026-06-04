@@ -165,7 +165,7 @@ async def call_write_homework_file(call: aiogram.types.CallbackQuery, state: FSM
 
 @send_homework_router.message(HomeWorkSendStates.file)
 @check_auth
-async def get_sended_file(message: aiogram.types.Message, state: FSMContext):
+async def get_sended_file(message: aiogram.types.Message):
     user_homework_pages_data = homework_pages_data.get(message.from_user.id)
     if user_homework_pages_data is None:
         await message.answer("Ошибка: начните процесс сначала.")
@@ -200,9 +200,9 @@ async def get_sended_file(message: aiogram.types.Message, state: FSMContext):
     
 @send_homework_router.callback_query("send_homework" == F.data)
 @check_auth
-async def call_checkout_homework(call: aiogram.types.CallbackQuery):
+async def call_checkout_homework(call: aiogram.types.CallbackQuery, state: FSMContext):
     hw_data: dict = homework_pages_data.get(call.from_user.id)
-    
+    await state.clear()
     if hw_data is None:
         await call.message.answer(text="Ошибка сессии! Попробуйте запросить ДЗ снова.")
         return
