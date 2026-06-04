@@ -18,6 +18,10 @@ async def handle_get_future_exams(call: aiogram.types.CallbackQuery):
     if user_future_exams == 500:
         await call.message.answer(text=get_500_message(call))
         return
+    elif user_future_exams == False:
+        await call.message.answer(text="Экзамены отсутствуют")
+        return
+
 
     message = 'Экзамены\n\n'
     for exam in user_future_exams:
