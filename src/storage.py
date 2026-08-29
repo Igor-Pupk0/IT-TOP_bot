@@ -17,4 +17,5 @@ users_states = {} # Состояния пользователей
 user_auths = {} # Авторизированные пользователи
 homework_pages_data = {} # Странички домашкних заданий
 settings_pages = {}
+failed_403_counts: dict[int, int] = {} # ponytail: RAM counter for 401/403/422, reset on success or restart
 notification_scheduler = AsyncIOScheduler(timezone="Asia/Krasnoyarsk")

@@ -24,11 +24,11 @@ class API:
                     telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
                         return 422
-                if response.status_code == 401:
-                    if await self.update_JWT_headers() == 422:
-                        telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
-                        await delete_user(telegram_id)
-                        return
+                    return 422
+                else:
+                    # 401/403 — пробуем обновить JWT, не кикаем сразу (кик через 3 цикла в notifications)
+                    await self.update_JWT_headers()
+                    return None
 
             else:
                 logger.error(f"Error in some func: {ex}")
@@ -94,8 +94,10 @@ class API:
                 break
             except Exception as e:
                 code = await self.__exception_handler(e, response)
-                if code != None:
+                if code is not None:
                     return code
+                if _ == 2:
+                    return response.status_code if response.status_code in (401, 403, 422) else response
         return response
 
     
@@ -109,6 +111,10 @@ class API:
                 break
             except Exception as e:
                 code = await self.__exception_handler(e, response)
+                if code is not None:
+                    return code
+                if _ == 2:
+                    return response.status_code if response.status_code in (401, 403, 422) else response
 
         return response
 
