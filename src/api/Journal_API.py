@@ -23,9 +23,10 @@ class API:
                     telegram_id = await db_obj.get_telegram_id_by_user(self.USER)
                     if telegram_id == None:
                         return 422
+                    return 422
                 else:
                     await self.update_JWT_headers()
-                    return
+                    return None
 
 
                     # await logout(telegram_id[0])
@@ -93,8 +94,11 @@ class API:
                 break
             except Exception as e:
                 code = await self.__exception_handler(e, response)
-                if code != None:
+                if code is not None:
                     return code
+                # auth refreshed (code is None) -> retry loop continues
+                if _ == 2:  # last retry still auth error -> propagate status
+                    return response.status_code if response.status_code in (401, 403, 422) else response
         return response
 
     
@@ -108,6 +112,10 @@ class API:
                 break
             except Exception as e:
                 code = await self.__exception_handler(e, response)
+                if code is not None:
+                    return code
+                if _ == 2:
+                    return response.status_code if response.status_code in (401, 403, 422) else response
 
         return response
 
@@ -364,10 +372,3 @@ class API:
         json_responce_obj = json.loads(response.text)
         
         return json_responce_obj 
-    
-
-
-# async def logout(telegram_id):
-#     logger.info(f"Пользователь (???:{telegram_id}) был кикнут из аккаунта")
-#     db_obj.delete_user_by_telegram_id(telegram_id)
-#     delete_user_status(telegram_id)
